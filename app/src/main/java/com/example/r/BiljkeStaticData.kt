@@ -54,7 +54,63 @@ val biljke = listOf(
         jela = listOf("Jogurt sa voćem"),
         klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA, KlimatskiTip.SUHA),
         zemljisniTipovi = listOf(Zemljiste.PJESKOVITO, Zemljiste.KRECNJACKO)
+    ),
+
+    Biljka(
+        naziv = "Šafran (Crocus)",
+        porodica = "Iridaceae",
+        medicinskoUpozorenje = "Nije preporučljivo konzumiranje u dozama večim od 100mg dnevno kao lijek. Doze od 12 - 20g mogu izazvati smrt.",
+        medicinskeKoristi = listOf(MedicinskaKorist.REGULACIJAPRITISKA, MedicinskaKorist.SMIRENJE, MedicinskaKorist.PODRSKAIMUNITETU),
+        profilOkusa = ProfilOkusaBiljke.SLATKI,
+        jela = listOf("Salata", "Pečena piletina", "Rižoto"),
+        klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA, KlimatskiTip.SUHA),
+        zemljisniTipovi = listOf(Zemljiste.GLINENO, Zemljiste.KRECNJACKO)
+    ),
+
+    Biljka(
+        naziv = "Kopriva (Urtica dioica)",
+        porodica = "Urticaceae",
+        medicinskoUpozorenje = "Nije preporučljivo za osobe sa bolestima bubrega.",
+        medicinskeKoristi = listOf(MedicinskaKorist.PODRSKAIMUNITETU),
+        profilOkusa = ProfilOkusaBiljke.GORKO,
+        jela = listOf("Čaj", "Supa"),
+        klimatskiTipovi = listOf(KlimatskiTip.UMJERENA),
+        zemljisniTipovi = listOf(Zemljiste.GLINENO)
+    ),
+
+    Biljka(
+        naziv = "Kadulja (Salvia officinalis)",
+        porodica = "Lamiaceae (metvice)",
+        medicinskoUpozorenje = "Nije preporučljivo za trudnice i dojilje.",
+        medicinskeKoristi = listOf(MedicinskaKorist.PODRSKAIMUNITETU),
+        profilOkusa = ProfilOkusaBiljke.AROMATICNO,
+        jela = listOf("Pečena janjetina", "Čaj"),
+        klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA),
+        zemljisniTipovi = listOf(Zemljiste.PJESKOVITO, Zemljiste.KRECNJACKO)
+    ),
+
+    Biljka(
+        naziv = "Maslačak (Taraxacum officinale)",
+        porodica = "Asteraceae (glavočike)",
+        medicinskoUpozorenje = "Nije preporučljivo za osobe sa bolestima žuči.",
+        medicinskeKoristi = listOf(MedicinskaKorist.PODRSKAIMUNITETU),
+        profilOkusa = ProfilOkusaBiljke.GORKO,
+        jela = listOf("Salata", "Čaj"),
+        klimatskiTipovi = listOf(KlimatskiTip.UMJERENA),
+        zemljisniTipovi = listOf(Zemljiste.GLINENO, Zemljiste.PJESKOVITO)
+    ),
+
+    Biljka(
+        naziv = "Tikvica (Cucurbita pepo)",
+        porodica = "Cucurbitaceae",
+        medicinskoUpozorenje = "Nema poznatih medicinskih upozorenja.",
+        medicinskeKoristi = listOf(MedicinskaKorist.PODRSKAIMUNITETU),
+        profilOkusa = ProfilOkusaBiljke.BEZUKUSNO,
+        jela = listOf("Pita", "Grilovane tikvice"),
+        klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA),
+        zemljisniTipovi = listOf(Zemljiste.GLINENO)
     )
+
 
 
 
