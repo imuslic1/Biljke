@@ -110,7 +110,9 @@ val biljke = listOf(
         klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA),
         zemljisniTipovi = listOf(Zemljiste.GLINENO)
     )
-
-
-
 )
+
+fun fetchBiljke(): List<Biljka> {
+    return biljke
+}
+

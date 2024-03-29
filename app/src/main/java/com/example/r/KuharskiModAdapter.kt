@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 
 class KuharskiModAdapter(
     private var biljke: List<Biljka>,
-    private val onItemClicked: (biljka: Biljka) -> Unit
-) : RecyclerView.Adapter<KuharskiModAdapter.BiljkaViewHolder>() {
+
+    //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
+    //private val onItemClicked: (biljka: Biljka) -> Unit
+
+    ) : RecyclerView.Adapter<KuharskiModAdapter.BiljkaViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BiljkaViewHolder
     {
         val view = LayoutInflater
@@ -35,11 +38,28 @@ class KuharskiModAdapter(
 
         holder.slikaBiljke.setImageResource(id)
         holder.okusBiljka.text = biljke[position].profilOkusa.opis
+
+        val jelaTemp = biljke[position].jela
+        if (jelaTemp.size > 0) {
+            holder.jelo1Biljka.text = jelaTemp[0]
+        }
+        if (jelaTemp.size > 1) {
+            holder.jelo2Biljka.text = jelaTemp[1]
+        }
+        if (jelaTemp.size > 2) {
+            holder.jelo3Biljka.text = jelaTemp[2]
+        }
+
+
+/*
         holder.jelo1Biljka.text = biljke[position].jela[0]
         holder.jelo2Biljka.text = biljke[position].jela[1]
         holder.jelo3Biljka.text = biljke[position].jela[2]
 
-        holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
+ */
+
+        //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
+        //holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
     }
     fun updateBiljke(biljke: List<Biljka>) {
         this.biljke = biljke

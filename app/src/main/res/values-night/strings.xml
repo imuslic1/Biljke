@@ -1,6 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">r</string>
-    <string name="plantName" />
     <string name="medWarning_text" />
     <string name="medBenefit1" />
     <string name="medBenefit2" />

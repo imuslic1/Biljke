@@ -8,38 +8,40 @@
     tools:context=".MainActivity">
 
     <Spinner
-        android:id="@+id/selectMode"
-        android:layout_width="341dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="4dp"
+        android:id="@+id/modSpinner"
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
+        app:layout_constraintEnd_toStartOf="@+id/resetBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/resetBtn"
-        android:layout_width="34dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="8dp"
-        android:background="@android:drawable/ic_popup_sync"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:autoSizeTextType="uniform"
+        android:backgroundTint="#B2F5AD"
+        android:text="@string/resetBtn"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/modSpinner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.487" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/biljkeRV"
         android:layout_width="388dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:clipToPadding="false"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:layout_height="550dp"
+        android:layout_margin="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectMode"
-        app:layout_constraintVertical_bias="0.366" />
+        app:layout_constraintTop_toBottomOf="@+id/modSpinner"
+        app:layout_constraintVertical_bias="0.501" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
