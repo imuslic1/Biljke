@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "r"
+rootProject.name = "spirala1"
 include(":app")
  

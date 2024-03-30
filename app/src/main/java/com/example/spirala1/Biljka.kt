@@ -1,4 +1,4 @@
-package com.example.r
+package com.example.spirala1
 
 data class Biljka (val naziv: String,
               val porodica: String,

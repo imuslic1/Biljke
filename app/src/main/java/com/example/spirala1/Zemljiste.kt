@@ -1,4 +1,4 @@
-package com.example.r
+package com.example.spirala1
 
 enum class Zemljiste(val naziv: String) {
     PJESKOVITO("Pjeskovito zemljište"),

@@ -1,4 +1,4 @@
-package com.example.r
+package com.example.spirala1
 
 val biljke = listOf(
     Biljka(

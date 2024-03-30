@@ -1,4 +1,4 @@
-package com.example.r
+package com.example.spirala1
 
 enum class ProfilOkusaBiljke(val opis: String) {
     MENTA("Mentol - osvježavajući, hladan ukus"),

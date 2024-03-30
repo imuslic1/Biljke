@@ -1,4 +1,4 @@
-package com.example.r
+package com.example.spirala1
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,16 +8,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MedicinskiModAdapter(
+class BotanickiModAdapter(
     private var biljke: List<Biljka>,
+
     //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
     //private val onItemClicked: (biljka: Biljka) -> Unit
-) : RecyclerView.Adapter<MedicinskiModAdapter.BiljkaViewHolder>() {
+
+) : RecyclerView.Adapter<BotanickiModAdapter.BiljkaViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BiljkaViewHolder
     {
         val view = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.medicinski_mod, parent, false)
+            .inflate(R.layout.botanicki_mod, parent, false)
 
         return BiljkaViewHolder(view)
     }
@@ -35,28 +37,12 @@ class MedicinskiModAdapter(
 
 
         holder.slikaBiljke.setImageResource(id)
-        holder.upozorenjeBiljka.text = biljke[position].medicinskoUpozorenje
-
-        val medicinskeKoristi = biljke[position].medicinskeKoristi
-        if (medicinskeKoristi.size > 0) {
-            holder.korist1Biljka.text = medicinskeKoristi[0].opis
-        }
-        if (medicinskeKoristi.size > 1) {
-            holder.korist2Biljka.text = medicinskeKoristi[1].opis
-        }
-        if (medicinskeKoristi.size > 2) {
-            holder.korist3Biljka.text = medicinskeKoristi[2].opis
-        }
-        /*
-        holder.korist1Biljka.text = biljke[position].medicinskeKoristi[0].opis
-        holder.korist2Biljka.text = biljke[position].medicinskeKoristi[1].opis
-        holder.korist3Biljka.text = biljke[position].medicinskeKoristi[2].opis
-
-         */
+        holder.porodicaBiljka.text = biljke[position].porodica
+        holder.klimatskiTipBiljka.text = biljke[position].klimatskiTipovi[0].opis
+        holder.zemljisniTipBiljka.text = biljke[position].zemljisniTipovi[0].naziv
 
         //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
         //holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
-
     }
     fun updateBiljke(biljke: List<Biljka>) {
         this.biljke = biljke
@@ -66,10 +52,9 @@ class MedicinskiModAdapter(
         val slikaBiljke: ImageView = itemView.findViewById(R.id.slikaItem)
         val nazivBiljke: TextView = itemView.findViewById(R.id.nazivItem)
 
-        val upozorenjeBiljka: TextView = itemView.findViewById(R.id.upozorenjeItem)
-        val korist1Biljka: TextView = itemView.findViewById(R.id.korist1Item)
-        val korist2Biljka: TextView = itemView.findViewById(R.id.korist2Item)
-        val korist3Biljka: TextView = itemView.findViewById(R.id.korist3Item)
+        val porodicaBiljka: TextView = itemView.findViewById(R.id.porodicaItem)
+        val klimatskiTipBiljka: TextView = itemView.findViewById(R.id.klimatskiTipItem)
+        val zemljisniTipBiljka: TextView = itemView.findViewById(R.id.zemljisniTipItem)
 
     }
 }
