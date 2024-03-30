@@ -9,7 +9,7 @@
 
     <Spinner
         android:id="@+id/modSpinner"
-        android:layout_width="310dp"
+        android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
@@ -19,19 +19,21 @@
 
     <Button
         android:id="@+id/resetBtn"
-        android:layout_width="80dp"
+        android:layout_width="90dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:autoSizeTextType="uniform"
+        android:textSize="14sp"
         android:backgroundTint="#B2F5AD"
         android:textColor="@android:color/black"
         android:text="@string/resetBtn"
         android:textAlignment="center"
+        android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/modSpinner"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.487" />
+        app:layout_constraintVertical_bias="0.487"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/biljkeRV"
