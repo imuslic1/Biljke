@@ -5,4 +5,10 @@
     <string name="medBenefit2" />
     <string name="medBenefit3" />
     <string name="resetBtn">Reset</string>
+    <string name="cookingTasteProfile" />
+    <string name="cookingDish1" />
+    <string name="cookingDish2" />
+    <string name="botanicFamily" />
+    <string name="botanicClimate" />
+    <string name="botanicSoilType" />
 </resources>

@@ -24,6 +24,7 @@
         android:layout_marginTop="8dp"
         android:autoSizeTextType="uniform"
         android:backgroundTint="#B2F5AD"
+        android:textColor="@android:color/black"
         android:text="@string/resetBtn"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
