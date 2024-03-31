@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var resetButton : Button
 
     //TODO: NE ZNAM MOZE LI OVAKO, RAZMISLI!
-    //private lateinit var filteredBiljke: List<Biljka>
+    private lateinit var filteredBiljke: List<Biljka>
     private var selectedBiljka : Biljka? = null
     private var currentMode: String = "medical"
 
@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         biljkeRV = findViewById(R.id.biljkeRV)
         biljkeList = fetchBiljke()
         resetButton = findViewById(R.id.resetBtn)
+        filteredBiljke = biljkeList
 
         val modes = arrayOf("medical", "cooking", "botanical")
         selectMode.adapter = ArrayAdapter(this,
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         biljkeRV.adapter = MedicinskiModAdapter(biljkeList) { selectedBiljka ->
 
-            val filteredBiljke = filterBiljke(currentMode, selectedBiljka)
+            filteredBiljke = filterBiljke(currentMode, selectedBiljka)
             updateAdapter(currentMode, filteredBiljke)
         }
 
@@ -59,8 +60,7 @@ class MainActivity : AppCompatActivity() {
                 currentMode = parent.getItemAtPosition(position).toString()
 
                 //TODO: MODIFY TO KEEP FILTERED PLANTS, DONT FILTER AFTER SELECTED PLANT HAS A VALUE
-                val biljke = selectedBiljka?.let { filterBiljke(currentMode,
-                    it) } ?: biljkeList
+                val biljke = selectedBiljka?.let { filteredBiljke } ?: biljkeList
                 updateAdapter(currentMode, biljke)
             }
 
@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         resetButton.setOnClickListener {
             selectedBiljka = null
+            filteredBiljke = biljkeList
             updateAdapter(currentMode, biljkeList)
         }
     }
@@ -80,19 +81,19 @@ class MainActivity : AppCompatActivity() {
         this.selectedBiljka = selectedBiljka
         return when (mode) {
             "medical" -> {
-                biljkeList.filter { biljka ->
+                filteredBiljke.filter { biljka ->
                     biljka.medicinskeKoristi.intersect(selectedBiljka.medicinskeKoristi.toSet()).isNotEmpty()
                 }
             }
             "cooking" -> {
-                biljkeList.filter { biljka ->
+                filteredBiljke.filter { biljka ->
                     biljka.profilOkusa == selectedBiljka.profilOkusa || biljka.jela.intersect(
                         selectedBiljka.jela.toSet()
                     ).isNotEmpty()
                 }
             }
             "botanical" -> {
-                biljkeList.filter { biljka ->
+                filteredBiljke.filter { biljka ->
                     biljka.porodica == selectedBiljka.porodica && biljka.klimatskiTipovi.intersect(
                         selectedBiljka.klimatskiTipovi.toSet()
                     ).isNotEmpty() && biljka.zemljisniTipovi.intersect(selectedBiljka.zemljisniTipovi.toSet()).isNotEmpty()
@@ -108,20 +109,20 @@ class MainActivity : AppCompatActivity() {
         when(mode) {
             "medical" -> {
                 biljkeRV.adapter = MedicinskiModAdapter(biljke) {selectedBiljka ->
-                    val filteredBiljke = filterBiljke(mode, selectedBiljka)
+                    filteredBiljke = filterBiljke(mode, selectedBiljka)
                     updateAdapter(mode, filteredBiljke)
                 }
             }
             "cooking" -> {
                 biljkeRV.adapter = KuharskiModAdapter(biljke) {selectedBiljka ->
-                    val filteredBiljke = filterBiljke(mode, selectedBiljka)
+                    filteredBiljke = filterBiljke(mode, selectedBiljka)
                     updateAdapter(mode, filteredBiljke)
                 }
             }
             "botanical" -> {
-            biljkeRV.adapter = BotanickiModAdapter(biljke) {selectedBiljka ->
-                val filteredBiljke = filterBiljke(mode, selectedBiljka)
-                updateAdapter(mode, filteredBiljke)
+                biljkeRV.adapter = BotanickiModAdapter(biljke) {selectedBiljka ->
+                    filteredBiljke = filterBiljke(mode, selectedBiljka)
+                    updateAdapter(mode, filteredBiljke)
                 }
             }
         }
