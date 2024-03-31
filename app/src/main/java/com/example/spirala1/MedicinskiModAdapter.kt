@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MedicinskiModAdapter(
     private var biljke: List<Biljka>,
-    //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
-    //private val onItemClicked: (biljka: Biljka) -> Unit
+
+    private val onItemClicked: (biljka: Biljka) -> Unit
+
 ) : RecyclerView.Adapter<MedicinskiModAdapter.BiljkaViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BiljkaViewHolder
-    {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BiljkaViewHolder {
         val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.medicinski_mod, parent, false)
@@ -38,7 +38,7 @@ class MedicinskiModAdapter(
         holder.upozorenjeBiljka.text = biljke[position].medicinskoUpozorenje
 
         val medicinskeKoristi = biljke[position].medicinskeKoristi
-        if (medicinskeKoristi.size > 0) {
+        if (medicinskeKoristi.isNotEmpty()) {
             holder.korist1Biljka.text = medicinskeKoristi[0].opis
         }
         if (medicinskeKoristi.size > 1) {
@@ -47,15 +47,8 @@ class MedicinskiModAdapter(
         if (medicinskeKoristi.size > 2) {
             holder.korist3Biljka.text = medicinskeKoristi[2].opis
         }
-        /*
-        holder.korist1Biljka.text = biljke[position].medicinskeKoristi[0].opis
-        holder.korist2Biljka.text = biljke[position].medicinskeKoristi[1].opis
-        holder.korist3Biljka.text = biljke[position].medicinskeKoristi[2].opis
 
-         */
-
-        //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
-        //holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
+        holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
 
     }
     fun updateBiljke(biljke: List<Biljka>) {

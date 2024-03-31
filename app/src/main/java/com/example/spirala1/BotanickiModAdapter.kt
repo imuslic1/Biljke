@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 class BotanickiModAdapter(
     private var biljke: List<Biljka>,
 
-    //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
-    //private val onItemClicked: (biljka: Biljka) -> Unit
+    private val onItemClicked: (biljka: Biljka) -> Unit
 
 ) : RecyclerView.Adapter<BotanickiModAdapter.BiljkaViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BiljkaViewHolder
@@ -41,8 +40,7 @@ class BotanickiModAdapter(
         holder.klimatskiTipBiljka.text = biljke[position].klimatskiTipovi[0].opis
         holder.zemljisniTipBiljka.text = biljke[position].zemljisniTipovi[0].naziv
 
-        //TODO: implementirati funkcionalnost za selektovanje slicnih biljaka
-        //holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
+        holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
     }
     fun updateBiljke(biljke: List<Biljka>) {
         this.biljke = biljke
