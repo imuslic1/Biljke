@@ -6,6 +6,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         resetButton = findViewById(R.id.resetBtn)
         filteredBiljke = biljkeList
 
-        val modes = arrayOf("medical", "cooking", "botanical")
+        val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
         selectMode.adapter = ArrayAdapter(this,
             android.R.layout.simple_spinner_dropdown_item, modes)
 
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // default view je medicinski
-                updateAdapter("medical", biljkeList)
+                updateAdapter("Medicinski", biljkeList)
             }
         }
 
@@ -80,19 +81,19 @@ class MainActivity : AppCompatActivity() {
     private fun filterBiljke(mode:String, selectedBiljka: Biljka): List<Biljka> {
         this.selectedBiljka = selectedBiljka
         return when (mode) {
-            "medical" -> {
+            "Medicinski" -> {
                 filteredBiljke.filter { biljka ->
                     biljka.medicinskeKoristi.intersect(selectedBiljka.medicinskeKoristi.toSet()).isNotEmpty()
                 }
             }
-            "cooking" -> {
+            "Kuharski" -> {
                 filteredBiljke.filter { biljka ->
                     biljka.profilOkusa == selectedBiljka.profilOkusa || biljka.jela.intersect(
                         selectedBiljka.jela.toSet()
                     ).isNotEmpty()
                 }
             }
-            "botanical" -> {
+            "Botanički" -> {
                 filteredBiljke.filter { biljka ->
                     biljka.porodica == selectedBiljka.porodica && biljka.klimatskiTipovi.intersect(
                         selectedBiljka.klimatskiTipovi.toSet()
@@ -107,19 +108,19 @@ class MainActivity : AppCompatActivity() {
     //TODO: SET filteredBiljke as a global, update as necessary
     private fun updateAdapter(mode: String, biljke: List<Biljka>) {
         when(mode) {
-            "medical" -> {
+            "Medicinski" -> {
                 biljkeRV.adapter = MedicinskiModAdapter(biljke) {selectedBiljka ->
                     filteredBiljke = filterBiljke(mode, selectedBiljka)
                     updateAdapter(mode, filteredBiljke)
                 }
             }
-            "cooking" -> {
+            "Kuharski" -> {
                 biljkeRV.adapter = KuharskiModAdapter(biljke) {selectedBiljka ->
                     filteredBiljke = filterBiljke(mode, selectedBiljka)
                     updateAdapter(mode, filteredBiljke)
                 }
             }
-            "botanical" -> {
+            "Botanički" -> {
                 biljkeRV.adapter = BotanickiModAdapter(biljke) {selectedBiljka ->
                     filteredBiljke = filterBiljke(mode, selectedBiljka)
                     updateAdapter(mode, filteredBiljke)

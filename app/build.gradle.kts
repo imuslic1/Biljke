@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.spirala1"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -45,4 +45,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
 }
