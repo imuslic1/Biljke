@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
                                         position: Int, id: Long) {
                 currentMode = parent.getItemAtPosition(position).toString()
 
-                //TODO: MODIFY TO KEEP FILTERED PLANTS, DONT FILTER AFTER SELECTED PLANT HAS A VALUE
                 val biljke = selectedBiljka?.let { filteredBiljke } ?: biljkeList
                 updateAdapter(currentMode, biljke)
             }
