@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "spirala1"
+rootProject.name = "Biljke"
 include(":app")
  

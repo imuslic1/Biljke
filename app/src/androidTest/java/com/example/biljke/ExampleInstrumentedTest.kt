@@ -1,4 +1,4 @@
-package com.example.spirala1
+package com.example.biljke
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

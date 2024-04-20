@@ -1,4 +1,4 @@
-package com.example.spirala1
+package com.example.biljke
 
 //ispravite paket tako da odgovara nazivu paketa kojeg imate u projektu
 //ovdje mozete dodati i import klasa ako su u drugom paketu

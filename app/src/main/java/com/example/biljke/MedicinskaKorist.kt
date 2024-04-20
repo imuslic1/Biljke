@@ -1,4 +1,4 @@
-package com.example.spirala1
+package com.example.biljke
 
 enum class MedicinskaKorist(val opis: String) {
     SMIRENJE("Smirenje - za smirenje i relaksaciju"),

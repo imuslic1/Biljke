@@ -1,6 +1,6 @@
-package com.example.spirala1
+package com.example.biljke
 
-val biljke = listOf(
+val biljke = mutableListOf(
     Biljka(
         naziv = "Bosiljak (Ocimum basilicum)",
         porodica = "Lamiaceae (usnate)",
@@ -114,5 +114,9 @@ val biljke = listOf(
 
 fun fetchBiljke(): List<Biljka> {
     return biljke
+}
+
+fun addBiljka(biljka: Biljka) {
+    biljke.add(biljka)
 }
 

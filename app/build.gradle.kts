@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.spirala1"
+    namespace = "com.example.biljke"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.spirala1"
+        applicationId = "com.example.biljke"
         minSdk = 29
         targetSdk = 34
         versionCode = 1

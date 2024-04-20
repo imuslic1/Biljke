@@ -1,4 +1,4 @@
-package com.example.spirala1
+package com.example.biljke
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,8 +18,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectMode: Spinner
     private lateinit var resetButton : Button
     private lateinit var newPlantButton : Button
-
-    //TODO: NE ZNAM MOZE LI OVAKO, RAZMISLI!
     private lateinit var filteredBiljke: List<Biljka>
     private var selectedBiljka : Biljka? = null
     private var currentMode: String = "medical"

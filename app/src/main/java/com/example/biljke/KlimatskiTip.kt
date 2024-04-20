@@ -1,4 +1,4 @@
-package com.example.spirala1
+package com.example.biljke
 
 enum class KlimatskiTip(val opis: String) {
     SREDOZEMNA("Mediteranska klima - suha, topla ljeta i blage zime"),
