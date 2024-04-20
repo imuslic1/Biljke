@@ -1,5 +1,6 @@
 package com.example.spirala1
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var biljkeList: List<Biljka>
     private lateinit var selectMode: Spinner
     private lateinit var resetButton : Button
+    private lateinit var newPlantButton : Button
 
     //TODO: NE ZNAM MOZE LI OVAKO, RAZMISLI!
     private lateinit var filteredBiljke: List<Biljka>
@@ -28,10 +30,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Initialize the variables
         selectMode = findViewById(R.id.modSpinner)
         biljkeRV = findViewById(R.id.biljkeRV)
         biljkeList = fetchBiljke()
         resetButton = findViewById(R.id.resetBtn)
+        newPlantButton = findViewById(R.id.novaBiljkaBtn)
         filteredBiljke = biljkeList
 
         val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
@@ -74,6 +78,11 @@ class MainActivity : AppCompatActivity() {
             selectedBiljka = null
             filteredBiljke = biljkeList
             updateAdapter(currentMode, biljkeList)
+        }
+
+        newPlantButton.setOnClickListener {
+            val intent = Intent(this, NovaBiljkaActivity::class.java)
+            startActivity(intent)
         }
     }
 

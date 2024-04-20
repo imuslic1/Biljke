@@ -13,4 +13,5 @@
     <string name="botanicFamily" />
     <string name="botanicClimate" />
     <string name="botanicSoilType" />
+    <string name="newPlant">New Plant</string>
 </resources>

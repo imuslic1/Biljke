@@ -12,8 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="5dp"
         app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
         app:layout_constraintEnd_toStartOf="@+id/resetBtn"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,16 +22,36 @@
         android:id="@+id/resetBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_margin="8dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="5dp"
         android:backgroundTint="#B2F5AD"
         android:text="@string/resetBtn"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/novaBiljkaBtn"
         app:layout_constraintStart_toEndOf="@+id/modSpinner"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.19" />
+    
+    <Button
+        android:id="@+id/novaBiljkaBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#009205"
+        android:text="@string/newPlant"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/biljkeRV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/resetBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.19"
+
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/biljkeRV"
