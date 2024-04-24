@@ -1,10 +1,14 @@
 package com.example.biljke
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class NovaBiljkaActivity : AppCompatActivity() {
@@ -21,6 +25,10 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var dodajBiljkuBtn : Button
     private lateinit var uslikajBiljkuBtn : Button
     private lateinit var slikaIV : ImageView
+
+    //TODO: hardcode za test, vrati nazad na lateinit
+    private val listaJela = mutableListOf("grah", "gulas", "corba", "caj")
+    @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_plant)
@@ -41,19 +49,70 @@ class NovaBiljkaActivity : AppCompatActivity() {
         dodajBiljkuBtn = findViewById(R.id.dodajBiljkuBtn)
         uslikajBiljkuBtn = findViewById(R.id.uslikajBiljkuBtn)
         slikaIV = findViewById(R.id.slikaIV)
+        slikaIV.setImageResource(R.drawable.default_img)
 
-        dodajJeloBtn.setOnClickListener{
-            val novoJelo=jeloET.text.toString()
-            //TODO:
-            //ovdje implementirati logiku za dodavanje jela i izmjenu jela u jelaLV
-            //kako promijeniti natpis na dugmetu
+
+
+        val listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, listaJela)
+        jelaLV.adapter = listAdapter
+
+        jelaLV.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            // 'position' is the position of the item in the list
+            // 'id' is the row id of the item
+            val item =
+                parent.getItemAtPosition(position) as String // replace String with your data type
+
+            // Now 'item' contains the contents of the tapped item
+            Toast.makeText(this@NovaBiljkaActivity, "Clicked item: $item", Toast.LENGTH_SHORT)
+                .show()
         }
 
+
+        dodajJeloBtn.setOnClickListener {
+            val novoJelo = jeloET.text.toString()
+            val dodajJeloString = getString(R.string.dodajJelo)
+
+
+            dodajJeloBtn.text = dodajJeloString
+
+            var dodati = true
+            if (novoJelo.length < 2 || novoJelo.length > 20) {
+                jeloET.setError("Naziv je neprihvatljive dužine!")
+                dodati = false
+            }
+
+            var postoji = false
+            listaJela.forEach {
+                if (it.lowercase() == novoJelo.lowercase()) postoji = true
+            }
+
+            if (!postoji && dodati) {
+                listaJela.add(novoJelo)
+                jelaLV.adapter = listAdapter
+            }
+
+            if (postoji) {
+                Toast.makeText(this@NovaBiljkaActivity, "Jelo postoji u listi", Toast.LENGTH_SHORT)
+                    .show()
+                //da li treba error ako jelo vec postoji
+            }
+        }
+
+        jelaLV.setOnItemClickListener{ parent, view, position, id ->
+            val izmijeniJeloString = getString(R.string.izmijeniJelo)
+            dodajJeloBtn.text = izmijeniJeloString
+            val odabranoJelo = listaJela[position]
+            jeloET.setText(odabranoJelo)
+            listaJela.remove(odabranoJelo)
+            jelaLV.adapter = listAdapter
+        }
+
+
+
         dodajBiljkuBtn.setOnClickListener {
-            val naziv= nazivET.text.toString()
+            val nazivc= nazivET.text.toString()
             val porodica = porodicaET.text.toString()
             val upozorenje = medicinskoUpozorenjeET.text.toString()
-            //TODO:
             //validacija vrijednosti polja
             //ispis gresaka za sva neispravna polja
             //kako dodati novu bilju - moze se probati nacin da se globalna lista proslijedi po referenci u novaBiljkaActivity i napuni novom biljkom
