@@ -1,21 +1,11 @@
 package com.example.biljke
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.Spinner
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var nazivET : EditText
@@ -60,7 +50,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
         }
 
         dodajBiljkuBtn.setOnClickListener {
-            val nazivc= nazivET.text.toString()
+            val naziv= nazivET.text.toString()
             val porodica = porodicaET.text.toString()
             val upozorenje = medicinskoUpozorenjeET.text.toString()
             //TODO:

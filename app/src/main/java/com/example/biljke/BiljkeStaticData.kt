@@ -1,6 +1,6 @@
 package com.example.biljke
 
-val biljke = mutableListOf(
+val biljke = listOf(
     Biljka(
         naziv = "Bosiljak (Ocimum basilicum)",
         porodica = "Lamiaceae (usnate)",
@@ -116,7 +116,12 @@ fun fetchBiljke(): List<Biljka> {
     return biljke
 }
 
+/*
 fun addBiljka(biljka: Biljka) {
+    //perzistencija podataka, zahtijeva mutableListOf() iznad!
+
     biljke.add(biljka)
 }
+*/
+
 
