@@ -27,7 +27,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var slikaIV : ImageView
 
     //TODO: hardcode za test, vrati nazad na lateinit
-    private val listaJela = mutableListOf("grah", "gulas", "corba", "caj")
+    private val listaJela = mutableListOf<String>()
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +53,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
 
 
-        val listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, listaJela)
+        val listAdapter = ArrayAdapter(this, R.layout.jela_lv_item, listaJela)
         jelaLV.adapter = listAdapter
 
         jelaLV.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
@@ -89,6 +89,9 @@ class NovaBiljkaActivity : AppCompatActivity() {
             if (!postoji && dodati) {
                 listaJela.add(novoJelo)
                 jelaLV.adapter = listAdapter
+
+                //TODO: provjeri s Ivonom da li treba, dodano naknadno
+                jeloET.text.clear()
             }
 
             if (postoji) {
@@ -134,5 +137,8 @@ class NovaBiljkaActivity : AppCompatActivity() {
             //moze se prije slikanja biljke dodati po defaultu ond defaultna slika
             //slika se ne mora vratiti u MainActivity nego se samo prikazati u formi
         }
+
+        //TODO: kod implementacije medicinskeKoristiLV podesiti
+        // layout itema na list_item. Smanjiti veličinu teksta i centrirati adekvatno
     }
 }
