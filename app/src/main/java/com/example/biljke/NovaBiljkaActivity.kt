@@ -1,7 +1,12 @@
 package com.example.biljke
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -25,9 +30,11 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var dodajBiljkuBtn : Button
     private lateinit var uslikajBiljkuBtn : Button
     private lateinit var slikaIV : ImageView
+    private val REQUEST_IMAGE_CAPTURE = 1
 
-    //TODO: hardcode za test, vrati nazad na lateinit
     private val listaJela = mutableListOf<String>()
+    //TODO: implementacija listi za ostale LV u layoutu
+
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,24 +44,33 @@ class NovaBiljkaActivity : AppCompatActivity() {
         porodicaET = findViewById(R.id.porodicaET)
         medicinskoUpozorenjeET = findViewById(R.id.medicinskoUpozorenjeET)
         jeloET = findViewById(R.id.jeloET)
+
         medicinskaKoristLV = findViewById(R.id.medicinskaKoristLV)
         medicinskaKoristLV.choiceMode =ListView.CHOICE_MODE_MULTIPLE
+
         klimatskiTipLV = findViewById(R.id.klimatskiTipLV)
         klimatskiTipLV.choiceMode =ListView.CHOICE_MODE_MULTIPLE
+
         zemljisniTipLV = findViewById(R.id.zemljisniTipLV)
         zemljisniTipLV.choiceMode =ListView.CHOICE_MODE_MULTIPLE
+
         profilOkusaLV = findViewById(R.id.profilOkusaLV)
         jelaLV = findViewById(R.id.jelaLV)
+
         dodajJeloBtn = findViewById(R.id.dodajJeloBtn)
         dodajBiljkuBtn = findViewById(R.id.dodajBiljkuBtn)
         uslikajBiljkuBtn = findViewById(R.id.uslikajBiljkuBtn)
+
         slikaIV = findViewById(R.id.slikaIV)
         slikaIV.setImageResource(R.drawable.default_img)
 
 
 
-        val listAdapter = ArrayAdapter(this, R.layout.jela_lv_item, listaJela)
-        jelaLV.adapter = listAdapter
+        val jelaAdapter = ArrayAdapter(this, R.layout.lv_item_medium, listaJela)
+        jelaLV.adapter = jelaAdapter
+
+        //TODO: implementacija adaptera za ostale LV iz layouta
+        //val klimaAdapter = ArrayAdapter(this, R.layout.lv_item_medium, listaKlimatskihTipova)
 
         jelaLV.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             // 'position' is the position of the item in the list
@@ -88,16 +104,13 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
             if (!postoji && dodati) {
                 listaJela.add(novoJelo)
-                jelaLV.adapter = listAdapter
-
-                //TODO: provjeri s Ivonom da li treba, dodano naknadno
+                jelaLV.adapter = jelaAdapter
                 jeloET.text.clear()
             }
 
             if (postoji) {
-                Toast.makeText(this@NovaBiljkaActivity, "Jelo postoji u listi", Toast.LENGTH_SHORT)
-                    .show()
-                //da li treba error ako jelo vec postoji
+                //Toast.makeText(this@NovaBiljkaActivity, "Jelo postoji u listi", Toast.LENGTH_SHORT).show()
+                jeloET.setError("Jelo već postoji")
             }
         }
 
@@ -107,7 +120,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
             val odabranoJelo = listaJela[position]
             jeloET.setText(odabranoJelo)
             listaJela.remove(odabranoJelo)
-            jelaLV.adapter = listAdapter
+            jelaLV.adapter = jelaAdapter
         }
 
 
@@ -131,14 +144,24 @@ class NovaBiljkaActivity : AppCompatActivity() {
         }
 
         uslikajBiljkuBtn.setOnClickListener {
-            //TODO:
-            //intent za slikanje bilje
-            //prikazati sliku u imageViewu
-            //moze se prije slikanja biljke dodati po defaultu ond defaultna slika
-            //slika se ne mora vratiti u MainActivity nego se samo prikazati u formi
+            val kameraIntent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            try{
+                startActivityForResult(kameraIntent, REQUEST_IMAGE_CAPTURE)
+            }
+            catch(e: ActivityNotFoundException){
+                Toast.makeText(this@NovaBiljkaActivity, "Import slike neuspjesan", Toast.LENGTH_SHORT).show()
+            }
         }
 
         //TODO: kod implementacije medicinskeKoristiLV podesiti
         // layout itema na list_item. Smanjiti veličinu teksta i centrirati adekvatno
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK){
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            slikaIV.setImageBitmap(imageBitmap)
+        }
     }
 }
