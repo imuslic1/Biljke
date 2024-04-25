@@ -1,13 +1,12 @@
 package com.example.biljke
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.AdapterView
+import android.widget.AdapterView.INVALID_POSITION
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -21,21 +20,31 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var porodicaET : EditText
     private lateinit var medicinskoUpozorenjeET : EditText
     private lateinit var jeloET : EditText
+
     private lateinit var medicinskaKoristLV : ListView
     private lateinit var klimatskiTipLV: ListView
     private lateinit var zemljisniTipLV : ListView
     private lateinit var profilOkusaLV : ListView
     private lateinit var jelaLV : ListView
+
     private lateinit var dodajJeloBtn : Button
     private lateinit var dodajBiljkuBtn : Button
     private lateinit var uslikajBiljkuBtn : Button
+
     private lateinit var slikaIV : ImageView
-    private val REQUEST_IMAGE_CAPTURE = 1
+    private val requestImageCapture = 1
+
+    /**
+     *  Koriste se za prikazivanje svih enum tipova za choice u odgovarajućim ListView poljima
+     */
+    private val _listaKlimatskihTipova : List<String> = KlimatskiTip.entries.map{it.opis}
+    private val _listaZemljisnihTipova: List<String> = Zemljiste.entries.map{it.naziv}
+    private val _listaMedicinskihKoristi: List<String> = MedicinskaKorist.entries.map{it.opis}
+    private val _listaProfilOkusa: List<String> = ProfilOkusaBiljke.entries.map{it.opis}
 
     private val listaJela = mutableListOf<String>()
-    //TODO: implementacija listi za ostale LV u layoutu
 
-    @SuppressLint("CutPasteId")
+    //@SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_plant)
@@ -55,6 +64,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
         zemljisniTipLV.choiceMode =ListView.CHOICE_MODE_MULTIPLE
 
         profilOkusaLV = findViewById(R.id.profilOkusaLV)
+        profilOkusaLV.choiceMode = ListView.CHOICE_MODE_SINGLE
         jelaLV = findViewById(R.id.jelaLV)
 
         dodajJeloBtn = findViewById(R.id.dodajJeloBtn)
@@ -64,36 +74,43 @@ class NovaBiljkaActivity : AppCompatActivity() {
         slikaIV = findViewById(R.id.slikaIV)
         slikaIV.setImageResource(R.drawable.default_img)
 
-
-
+        /**
+         * Podešavanje adaptera za prikaz elemenata listi u respektivnim ListViews
+         */
         val jelaAdapter = ArrayAdapter(this, R.layout.lv_item_medium, listaJela)
         jelaLV.adapter = jelaAdapter
 
-        //TODO: implementacija adaptera za ostale LV iz layouta
-        //val klimaAdapter = ArrayAdapter(this, R.layout.lv_item_medium, listaKlimatskihTipova)
+        val klimatskiAdapter = ArrayAdapter(this, R.layout.lv_item_small_multiplechoice, _listaKlimatskihTipova)
+        klimatskiTipLV.adapter = klimatskiAdapter
 
+        val zemljisteAdapter=ArrayAdapter(this, R.layout.lv_item_small_multiplechoice, _listaZemljisnihTipova)
+        zemljisniTipLV.adapter=zemljisteAdapter
+
+        val medKoristAdapter=ArrayAdapter(this, R.layout.lv_item_small_multiplechoice, _listaMedicinskihKoristi)
+        medicinskaKoristLV.adapter=medKoristAdapter
+
+        val profilOkusaAdapter=ArrayAdapter(this, R.layout.lv_item_small_singlechoice, _listaProfilOkusa)
+        profilOkusaLV.adapter=profilOkusaAdapter
+
+        /* DEBUGGING:
         jelaLV.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            // 'position' is the position of the item in the list
-            // 'id' is the row id of the item
             val item =
-                parent.getItemAtPosition(position) as String // replace String with your data type
+                parent.getItemAtPosition(position) as String
 
-            // Now 'item' contains the contents of the tapped item
             Toast.makeText(this@NovaBiljkaActivity, "Clicked item: $item", Toast.LENGTH_SHORT)
                 .show()
         }
-
+         */
 
         dodajJeloBtn.setOnClickListener {
             val novoJelo = jeloET.text.toString()
             val dodajJeloString = getString(R.string.dodajJelo)
 
-
             dodajJeloBtn.text = dodajJeloString
 
             var dodati = true
             if (novoJelo.length < 2 || novoJelo.length > 20) {
-                jeloET.setError("Naziv je neprihvatljive dužine!")
+                jeloET.error = "Naziv je neprihvatljive dužine!"
                 dodati = false
             }
 
@@ -110,7 +127,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
             if (postoji) {
                 //Toast.makeText(this@NovaBiljkaActivity, "Jelo postoji u listi", Toast.LENGTH_SHORT).show()
-                jeloET.setError("Jelo već postoji")
+                jeloET.error = "Jelo već postoji"
             }
         }
 
@@ -126,9 +143,142 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
 
         dodajBiljkuBtn.setOnClickListener {
-            val nazivc= nazivET.text.toString()
-            val porodica = porodicaET.text.toString()
-            val upozorenje = medicinskoUpozorenjeET.text.toString()
+            val konstrNaziv = nazivET.text.toString()
+            val konstrPorodica = porodicaET.text.toString()
+            val konstrUpozorenje = medicinskoUpozorenjeET.text.toString()
+
+            /**
+             * Izvlačenje med. koristi koji idu u objekat nove biljke
+             */
+            val checkedMedKoristi = medicinskaKoristLV.checkedItemPositions
+            val konstrListaMedKoristEnum = mutableListOf<MedicinskaKorist>()
+            for (i in 0 until medicinskaKoristLV.adapter.count) {
+                if (checkedMedKoristi[i]) {
+                    val opis = medicinskaKoristLV.adapter.getItem(i) as String
+                    val enumValue = MedicinskaKorist.getFromDescription(opis)
+                    if(enumValue != null) konstrListaMedKoristEnum.add(enumValue)
+                }
+            }
+
+            /**
+             * Izvlačenje klim. tipova koji idu u objekat nove biljke
+             */
+            val checkedKlimTipovi = klimatskiTipLV.checkedItemPositions
+            val konstrListaKlimTipEnum = mutableListOf<KlimatskiTip>()
+            for (i in 0 until klimatskiTipLV.adapter.count) {
+                if (checkedMedKoristi[i]) {
+                    val opis = klimatskiTipLV.adapter.getItem(i) as String
+                    val enumValue = KlimatskiTip.getFromDescription(opis)
+                    if(enumValue != null) konstrListaKlimTipEnum.add(enumValue)
+                }
+
+            }
+
+            /**
+             * Izvlačenje zemlj. tipova koji idu u objekat nove biljke
+             */
+            val checkedZemljista = zemljisniTipLV.checkedItemPositions
+            val konstrListaZemljistaEnum = mutableListOf<Zemljiste>()
+            for (i in 0 until zemljisniTipLV.adapter.count) {
+                if (checkedMedKoristi[i]) {
+                    val opis = zemljisniTipLV.adapter.getItem(i) as String
+                    val enumValue = Zemljiste.getFromName(opis)
+                    if(enumValue != null) konstrListaZemljistaEnum.add(enumValue)
+                }
+
+            }
+
+            /**
+             * Izvlačenje profila okusa koji idu u objdkat nove biljke
+             */
+            val checkedProfilOkusa = profilOkusaLV.checkedItemPosition
+            var konstrProfilOkusaEnum : ProfilOkusaBiljke? = null
+            if(checkedProfilOkusa != INVALID_POSITION) {
+                val opis = profilOkusaLV.adapter.getItem(checkedProfilOkusa) as String
+                val enumValue = ProfilOkusaBiljke.getFromDescription(opis)
+                if (enumValue != null) konstrProfilOkusaEnum = enumValue
+            }
+
+            //za validaciju
+            val jelo=jeloET.text.toString()
+
+            var mozeSeDodati = true
+            var duzinaNazivaOk = true
+            var duzinaPorodiceOk = true
+            var duzinaUpozorenjaOk = true
+            var duzinaJelaOk = true
+            var odabranBarJedanKlimTip = true
+            var odabranBarJedanZemljTip = true
+            var odabranaBarJednaMedKorist = true
+            var postojiBarJednoJelo = true
+            var odabranProfilOkusa = true
+
+            /**
+             * Validacija podataka
+             */
+            if(konstrNaziv.length !in 2..20) { duzinaNazivaOk = false; mozeSeDodati = false }
+            if(!duzinaNazivaOk) nazivET.error = "Naziv je neprihvatljive dužine!"
+
+            if(konstrPorodica.length !in 2..20) { duzinaPorodiceOk = false; mozeSeDodati = false }
+            if(!duzinaPorodiceOk) porodicaET.error = "Naziv je neprihvatljive dužine!"
+
+            if(konstrUpozorenje.length !in 2..20) { duzinaUpozorenjaOk = false; mozeSeDodati = false }
+            if(!duzinaUpozorenjaOk) medicinskoUpozorenjeET.error = "Naziv je neprihvatljive dužine!"
+
+            if(jelo.isNotEmpty() && (jelo.length !in 2..20)) { duzinaJelaOk = false; mozeSeDodati=false }
+            if(!duzinaJelaOk) jeloET.error = "Naziv je neprihvatljive dužine!"
+
+            if (konstrListaMedKoristEnum.isEmpty()) odabranaBarJednaMedKorist=false
+            if(!odabranaBarJednaMedKorist){
+                mozeSeDodati = false
+                Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jednu medicinsku korist", Toast.LENGTH_SHORT).show()
+            }
+
+            if (konstrListaKlimTipEnum.isEmpty()) odabranBarJedanKlimTip=false
+            if(!odabranBarJedanKlimTip){
+                mozeSeDodati = false
+                Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jedan klimatski tip", Toast.LENGTH_SHORT).show()
+            }
+
+            if (konstrListaZemljistaEnum.isEmpty()) odabranBarJedanZemljTip=false
+            if(!odabranBarJedanZemljTip){
+                mozeSeDodati = false
+                Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jedan zemljisni tip", Toast.LENGTH_SHORT).show()
+            }
+
+            if(listaJela.isEmpty()) postojiBarJednoJelo=false
+            if(!postojiBarJednoJelo){
+                mozeSeDodati = false
+                Toast.makeText(this@NovaBiljkaActivity, "Dodajte barem jedno jelo", Toast.LENGTH_SHORT).show()
+            }
+
+            if(konstrProfilOkusaEnum == null) odabranProfilOkusa=false
+            if(!odabranProfilOkusa){
+                mozeSeDodati = false
+                Toast.makeText(this@NovaBiljkaActivity, "Odaberite profil okusa", Toast.LENGTH_SHORT).show()
+            }
+
+            //nakon uspjesne validacije, ovo je nova biljka
+            if(mozeSeDodati) {
+
+                //DEBUGGING:
+                Toast.makeText(this@NovaBiljkaActivity, "BILJKA USPJESNO VALIDIRANA", Toast.LENGTH_SHORT).show()
+
+                val novaBiljka = konstrProfilOkusaEnum?.let { it1 ->
+                    Biljka(
+                        konstrNaziv,
+                        konstrPorodica,
+                        konstrUpozorenje,
+                        konstrListaMedKoristEnum,
+                        it1,
+                        listaJela,
+                        konstrListaKlimTipEnum,
+                        konstrListaZemljistaEnum
+                    )
+                }
+            }
+            else Toast.makeText(this@NovaBiljkaActivity, "NEUSPJESNA VALIDACIJA", Toast.LENGTH_SHORT).show()
+
             //validacija vrijednosti polja
             //ispis gresaka za sva neispravna polja
             //kako dodati novu bilju - moze se probati nacin da se globalna lista proslijedi po referenci u novaBiljkaActivity i napuni novom biljkom
@@ -146,20 +296,17 @@ class NovaBiljkaActivity : AppCompatActivity() {
         uslikajBiljkuBtn.setOnClickListener {
             val kameraIntent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try{
-                startActivityForResult(kameraIntent, REQUEST_IMAGE_CAPTURE)
+                startActivityForResult(kameraIntent, requestImageCapture)
             }
             catch(e: ActivityNotFoundException){
                 Toast.makeText(this@NovaBiljkaActivity, "Import slike neuspjesan", Toast.LENGTH_SHORT).show()
             }
         }
-
-        //TODO: kod implementacije medicinskeKoristiLV podesiti
-        // layout itema na list_item. Smanjiti veličinu teksta i centrirati adekvatno
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK){
+        if(requestCode == requestImageCapture && resultCode == Activity.RESULT_OK){
             val imageBitmap = data?.extras?.get("data") as Bitmap
             slikaIV.setImageBitmap(imageBitmap)
         }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/text_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
-    android:textSize="14sp"
+    android:textSize="12sp"
+    android:minHeight="40dp"
     android:gravity="center_vertical"
+    android:checkMark="?android:attr/listChoiceIndicatorSingle"
+    android:checkMarkTint="#009205"
     android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
-    android:minHeight="40dp"
 
-    /> <!-- Set your desired text size here -->
+    />

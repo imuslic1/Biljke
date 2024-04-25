@@ -8,5 +8,11 @@ enum class ProfilOkusaBiljke(val opis: String) {
     LJUTO("Ljuto ili papreno"),
     KORIJENASTO("Korenast - drvenast i gorak ukus"),
     AROMATICNO("Začinski - topli i aromatičan ukus"),
-    GORKO("Gorak okus"),
+    GORKO("Gorak okus");
+
+    companion object {
+        fun getFromDescription(description : String) : ProfilOkusaBiljke? {
+            return entries.toTypedArray().find { it.opis == description }
+        }
+    }
 }

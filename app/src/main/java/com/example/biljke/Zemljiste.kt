@@ -7,4 +7,10 @@ enum class Zemljiste(val naziv: String) {
     CRNICA("Crnica"),
     SLJUNOVITO("Šljunovito zemljište"),
     KRECNJACKO("Krečnjačko zemljište");
+
+    companion object {
+        fun getFromName(name:String) : Zemljiste? {
+            return entries.toTypedArray().find { it.naziv == name }
+        }
+    }
 }
