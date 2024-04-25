@@ -7,7 +7,7 @@
     android:minHeight="40dp"
     android:gravity="center_vertical"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
-    android:checkMarkTint="#009205"
+    android:checkMarkTint="@color/accentColor"
     android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
 
