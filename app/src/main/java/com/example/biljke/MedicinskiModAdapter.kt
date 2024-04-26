@@ -38,6 +38,12 @@ class MedicinskiModAdapter(
         holder.upozorenjeBiljka.text = biljke[position].medicinskoUpozorenje
 
         val medicinskeKoristi = biljke[position].medicinskeKoristi
+
+        holder.korist1Biljka.text = ""
+        holder.korist2Biljka.text = ""
+        holder.korist3Biljka.text = ""
+
+
         if (medicinskeKoristi.isNotEmpty()) {
             holder.korist1Biljka.text = medicinskeKoristi[0].opis
         }

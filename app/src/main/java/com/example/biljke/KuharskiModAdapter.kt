@@ -39,6 +39,10 @@ class KuharskiModAdapter(
         holder.okusBiljka.text = biljke[position].profilOkusa.opis
 
         val jelaTemp = biljke[position].jela
+        holder.jelo1Biljka.text = ""
+        holder.jelo2Biljka.text = ""
+        holder.jelo3Biljka.text = ""
+
         if (jelaTemp.size > 0) {
             holder.jelo1Biljka.text = jelaTemp[0]
         }

@@ -226,6 +226,7 @@
         android:id="@+id/ButtonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minHeight="55dp"
         android:layout_margin="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -235,11 +236,11 @@
         <Button
             android:id="@+id/dodajJeloBtn"
             android:text="@string/dodajJelo"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:backgroundTint="@color/accentColor"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:textColor="@color/buttonText"
             />
@@ -247,11 +248,11 @@
         <Button
             android:id="@+id/dodajBiljkuBtn"
             android:text="@string/dodajBiljku"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:backgroundTint="@color/accentColor"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="8dp"
             android:textColor="@color/buttonText"
             />
@@ -259,11 +260,11 @@
         <Button
             android:id="@+id/uslikajBiljkuBtn"
             android:text="@string/uslikajBiljku"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:backgroundTint="@color/accentColor"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:textColor="@color/buttonText"
             />

@@ -143,8 +143,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
             jelaLV.adapter = jelaAdapter
         }
 
-
-
         dodajBiljkuBtn.setOnClickListener {
             val konstrNaziv = nazivET.text.toString()
             val konstrPorodica = porodicaET.text.toString()
@@ -169,7 +167,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
             val checkedKlimTipovi = klimatskiTipLV.checkedItemPositions
             val konstrListaKlimTipEnum = mutableListOf<KlimatskiTip>()
             for (i in 0 until klimatskiTipLV.adapter.count) {
-                if (checkedMedKoristi[i]) {
+                if (checkedKlimTipovi[i]) {
                     val opis = klimatskiTipLV.adapter.getItem(i) as String
                     val enumValue = KlimatskiTip.getFromDescription(opis)
                     if(enumValue != null) konstrListaKlimTipEnum.add(enumValue)
@@ -183,7 +181,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
             val checkedZemljista = zemljisniTipLV.checkedItemPositions
             val konstrListaZemljistaEnum = mutableListOf<Zemljiste>()
             for (i in 0 until zemljisniTipLV.adapter.count) {
-                if (checkedMedKoristi[i]) {
+                if (checkedZemljista[i]) {
                     val opis = zemljisniTipLV.adapter.getItem(i) as String
                     val enumValue = Zemljiste.getFromName(opis)
                     if(enumValue != null) konstrListaZemljistaEnum.add(enumValue)
@@ -206,66 +204,68 @@ class NovaBiljkaActivity : AppCompatActivity() {
             val jelo=jeloET.text.toString()
 
             var mozeSeDodati = true
-            var duzinaNazivaOk = true
-            var duzinaPorodiceOk = true
-            var duzinaUpozorenjaOk = true
-            var duzinaJelaOk = true
-            var odabranBarJedanKlimTip = true
-            var odabranBarJedanZemljTip = true
-            var odabranaBarJednaMedKorist = true
-            var postojiBarJednoJelo = true
-            var odabranProfilOkusa = true
 
             /**
              * Validacija podataka
              */
+            var duzinaNazivaOk = true
             if(konstrNaziv.length !in 2..20) { duzinaNazivaOk = false; mozeSeDodati = false }
             if(!duzinaNazivaOk) nazivET.error = "Naziv je neprihvatljive dužine!"
 
+            var duzinaPorodiceOk = true
             if(konstrPorodica.length !in 2..20) { duzinaPorodiceOk = false; mozeSeDodati = false }
             if(!duzinaPorodiceOk) porodicaET.error = "Naziv je neprihvatljive dužine!"
 
+            var duzinaUpozorenjaOk = true
             if(konstrUpozorenje.length !in 2..20) { duzinaUpozorenjaOk = false; mozeSeDodati = false }
             if(!duzinaUpozorenjaOk) medicinskoUpozorenjeET.error = "Naziv je neprihvatljive dužine!"
 
+            var duzinaJelaOk = true
             if(jelo.isNotEmpty() && (jelo.length !in 2..20)) { duzinaJelaOk = false; mozeSeDodati=false }
             if(!duzinaJelaOk) jeloET.error = "Naziv je neprihvatljive dužine!"
 
+            var odabranaBarJednaMedKorist = true
             if (konstrListaMedKoristEnum.isEmpty()) odabranaBarJednaMedKorist=false
             if(!odabranaBarJednaMedKorist){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jednu medicinsku korist", Toast.LENGTH_SHORT).show()
+                dodajBiljkuBtn.error = "Odaberita barem jednu medicinsku korist"
             }
 
+            var odabranBarJedanKlimTip = true
             if (konstrListaKlimTipEnum.isEmpty()) odabranBarJedanKlimTip=false
             if(!odabranBarJedanKlimTip){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jedan klimatski tip", Toast.LENGTH_SHORT).show()
+                dodajBiljkuBtn.error = "Odaberite barem jedan klimatski tip"
             }
 
+            var odabranBarJedanZemljTip = true
             if (konstrListaZemljistaEnum.isEmpty()) odabranBarJedanZemljTip=false
             if(!odabranBarJedanZemljTip){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jedan zemljisni tip", Toast.LENGTH_SHORT).show()
+                dodajBiljkuBtn.error = "Odaberite barem jedan zemljisni tip"
             }
 
+            var postojiBarJednoJelo = true
             if(listaJela.isEmpty()) postojiBarJednoJelo=false
             if(!postojiBarJednoJelo){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Dodajte barem jedno jelo", Toast.LENGTH_SHORT).show()
+                dodajBiljkuBtn.error = "Dodajte barem jedno jelo"
             }
 
+            var odabranProfilOkusa = true
             if(konstrProfilOkusaEnum == null) odabranProfilOkusa=false
             if(!odabranProfilOkusa){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Odaberite profil okusa", Toast.LENGTH_SHORT).show()
+                dodajBiljkuBtn.error = "Odaberite profil okusa"
             }
 
             //nakon uspjesne validacije, ovo je nova biljka
             if(mozeSeDodati) {
-
-                //DEBUGGING:
-                Toast.makeText(this@NovaBiljkaActivity, "BILJKA USPJESNO VALIDIRANA", Toast.LENGTH_SHORT).show()
 
                 val novaBiljka = konstrProfilOkusaEnum?.let { it1 ->
                     Biljka(
@@ -280,26 +280,20 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     )
                 }
                 biljkeList?.add(novaBiljka)
+
+                //DEBUGGING:
+                Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
+
                 val returnIntent = Intent()
-                returnIntent.putParcelableArrayListExtra("biljkeList", ArrayList(biljkeList))
+                returnIntent.putParcelableArrayListExtra("biljkeList",
+                    biljkeList?.let { it1 -> ArrayList(it1) })
                 setResult(Activity.RESULT_OK, returnIntent)
                 finish()
             }
             //DEBUGGING
-            else Toast.makeText(this@NovaBiljkaActivity, "NEUSPJESNA VALIDACIJA", Toast.LENGTH_SHORT).show()
-
-            //validacija vrijednosti polja
-            //ispis gresaka za sva neispravna polja
-            //kako dodati novu bilju - moze se probati nacin da se globalna lista proslijedi po referenci u novaBiljkaActivity i napuni novom biljkom
-            //ako je sve ok vrati se korisnik na mainActivity
-
-            //VALIDACIJA:
-            //duzina teksta >2 i <20 znakova (da li ima =)
-            //ne mogu biti dva ista jela u listi jela (nije casesensitive)
-            //u listama sa multiple mora biti bar jedna stvar odabrana
-            //u listi jela mora biti dodano bar jedno jelo
-            //u profiluOkusa mora bar jedan biti odabran
-            //setError() metoda za ispis greske polja u validaciji
+            else {
+                // Toast.makeText(this@NovaBiljkaActivity, "NEUSPJESNA VALIDACIJA", Toast.LENGTH_SHORT).show()
+            }
         }
 
         uslikajBiljkuBtn.setOnClickListener {
