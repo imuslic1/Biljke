@@ -37,10 +37,6 @@ class MainActivity : AppCompatActivity() {
         newPlantButton = findViewById(R.id.novaBiljkaBtn)
         filteredBiljke = biljkeList
 
-
-
-
-
         val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
         selectMode.adapter = ArrayAdapter(this,
             android.R.layout.simple_spinner_dropdown_item, modes)
@@ -98,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == NOVA_BILJKA_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 biljkeList = data?.getParcelableArrayListExtra("biljkeList")?: mutableListOf()
+                filteredBiljke = biljkeList
                 // Refresh your UI here
                 updateAdapter("Medicinski", biljkeList)
             }
