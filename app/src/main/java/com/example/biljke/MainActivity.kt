@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 biljkeList = data?.getParcelableArrayListExtra("biljkeList")?: mutableListOf()
                 // Refresh your UI here
-                updateAdapter(currentMode, biljkeList)
+                updateAdapter("Medicinski", biljkeList)
             }
         }
     }
@@ -130,8 +130,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    //TODO: SET filteredBiljke as a global, update as necessary
     private fun updateAdapter(mode: String, biljke: List<Biljka>) {
         when(mode) {
             "Medicinski" -> {
