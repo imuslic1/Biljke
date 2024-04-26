@@ -34,6 +34,8 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var slikaIV : ImageView
     private val requestImageCapture = 1
 
+
+
     /**
      *  Koriste se za prikazivanje svih enum tipova za choice u odgovarajućim ListView poljima
      */
@@ -48,6 +50,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_plant)
+        val biljkeList = intent.getParcelableArrayListExtra<Biljka>("biljkeList")
 
         nazivET = findViewById(R.id.nazivET)
         porodicaET = findViewById(R.id.porodicaET)
@@ -276,7 +279,13 @@ class NovaBiljkaActivity : AppCompatActivity() {
                         konstrListaZemljistaEnum
                     )
                 }
+                biljkeList?.add(novaBiljka)
+                val returnIntent = Intent()
+                returnIntent.putParcelableArrayListExtra("biljkeList", ArrayList(biljkeList))
+                setResult(Activity.RESULT_OK, returnIntent)
+                finish()
             }
+            //DEBUGGING
             else Toast.makeText(this@NovaBiljkaActivity, "NEUSPJESNA VALIDACIJA", Toast.LENGTH_SHORT).show()
 
             //validacija vrijednosti polja

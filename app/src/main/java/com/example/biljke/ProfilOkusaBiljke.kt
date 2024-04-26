@@ -1,6 +1,11 @@
 package com.example.biljke
 
-enum class ProfilOkusaBiljke(val opis: String) {
+import android.os.Parcelable
+import androidx.versionedparcelable.VersionedParcelize
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+enum class ProfilOkusaBiljke(val opis: String) : Parcelable {
     MENTA("Mentol - osvježavajući, hladan ukus"),
     CITRUSNI("Citrusni - osvježavajući, aromatičan"),
     SLATKI("Sladak okus"),

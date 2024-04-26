@@ -3,7 +3,7 @@
     android:id="@+id/text_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="12sp"
+    android:textSize="11sp"
     android:minHeight="40dp"
     android:gravity="center_vertical"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"

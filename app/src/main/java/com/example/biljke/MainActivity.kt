@@ -1,5 +1,6 @@
 package com.example.biljke
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,15 +13,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
-
+    private val NOVA_BILJKA_ACTIVITY_REQUEST_CODE = 0
     private lateinit var biljkeRV: RecyclerView
-    private lateinit var biljkeList: List<Biljka>
     private lateinit var selectMode: Spinner
     private lateinit var resetButton : Button
     private lateinit var newPlantButton : Button
     private lateinit var filteredBiljke: List<Biljka>
     private var selectedBiljka : Biljka? = null
     private var currentMode: String = "medical"
+
+    private val biljkeObicne = fetchBiljke()
+    private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //enableEdgeToEdge()
@@ -30,10 +33,13 @@ class MainActivity : AppCompatActivity() {
         //Initialize the variables
         selectMode = findViewById(R.id.modSpinner)
         biljkeRV = findViewById(R.id.biljkeRV)
-        biljkeList = fetchBiljke()
         resetButton = findViewById(R.id.resetBtn)
         newPlantButton = findViewById(R.id.novaBiljkaBtn)
         filteredBiljke = biljkeList
+
+
+
+
 
         val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
         selectMode.adapter = ArrayAdapter(this,
@@ -79,7 +85,22 @@ class MainActivity : AppCompatActivity() {
 
         newPlantButton.setOnClickListener {
             val intent = Intent(this, NovaBiljkaActivity::class.java)
-            startActivity(intent)
+            intent.putParcelableArrayListExtra("biljkeList", ArrayList(biljkeList))
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+    }
+    companion object {
+        const val REQUEST_CODE = 0
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NOVA_BILJKA_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                biljkeList = data?.getParcelableArrayListExtra("biljkeList")?: mutableListOf()
+                // Refresh your UI here
+                updateAdapter(currentMode, biljkeList)
+            }
         }
     }
 

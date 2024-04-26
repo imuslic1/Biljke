@@ -1,6 +1,11 @@
 package com.example.biljke
 
-enum class Zemljiste(val naziv: String) {
+import android.os.Parcelable
+import androidx.versionedparcelable.VersionedParcelize
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+enum class Zemljiste(val naziv: String) : Parcelable {
     PJESKOVITO("Pjeskovito zemljište"),
     GLINENO("Glinеno zemljište"),
     ILOVACA("Ilovača"),
