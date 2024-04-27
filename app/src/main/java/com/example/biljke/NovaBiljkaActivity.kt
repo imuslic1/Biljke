@@ -129,8 +129,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
             }
 
             if (postoji) {
-                //Toast.makeText(this@NovaBiljkaActivity, "Jelo postoji u listi", Toast.LENGTH_SHORT).show()
-                jeloET.error = "Jelo već postoji"
+                jeloET.error = "Jelo već postoji!"
             }
         }
 
@@ -229,7 +228,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
             if(!odabranaBarJednaMedKorist){
                 mozeSeDodati = false
                 Toast.makeText(this@NovaBiljkaActivity, "Odaberite barem jednu medicinsku korist", Toast.LENGTH_SHORT).show()
-                dodajBiljkuBtn.error = "Odaberita barem jednu medicinsku korist"
+                dodajBiljkuBtn.error = "Odaberite barem jednu medicinsku korist"
             }
 
             var odabranBarJedanKlimTip = true
