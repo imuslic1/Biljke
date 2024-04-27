@@ -7,7 +7,7 @@ import android.widget.ImageView
 import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.Description
 
-object DrawableMatcher {
+object BitmapMatcher {
     fun withBitmap(expectedBitmap: Bitmap) = object : BoundedMatcher<View, ImageView>(ImageView::class.java) {
         override fun describeTo(description: Description?) {
             description?.appendText("with bitmap: $expectedBitmap")

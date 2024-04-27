@@ -2,7 +2,6 @@ package com.example.biljke
 
 import android.app.Activity
 import android.app.Instrumentation
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,21 +26,12 @@ import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasErrorText
-import androidx.test.rule.ActivityTestRule
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers.hasToString
 import org.hamcrest.number.OrderingComparison
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers.withDecorView
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.example.biljke.DrawableMatcher.withBitmap
+import com.example.biljke.BitmapMatcher.withBitmap
 import com.example.biljke.ErrorMatcher.withErrorText
-import com.google.android.material.internal.ContextUtils.getActivity
-import org.hamcrest.Matchers.not
-import org.hamcrest.Matchers.`is`
 
 
 import org.junit.Rule
@@ -125,7 +115,7 @@ class TestS2 {
     }
 
     @Test
-    fun neispravanNaziv(){
+    fun predugNaziv(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("T"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
@@ -147,7 +137,7 @@ class TestS2 {
     }
 
     @Test
-    fun neispravnaPorodica(){
+    fun predugaPorodica(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("Timijan"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae  (usnatice)"))
@@ -195,7 +185,7 @@ class TestS2 {
     }
 
     @Test
-    fun neispravnoJelo(){
+    fun predugoJelo(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("Timijan (Thymuy vulgaris)"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
@@ -345,14 +335,14 @@ class TestS2 {
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         Intents.init()
 
-        val fotografijaZaTest: Bitmap = BitmapFactory.decodeResource(
+        val slikaZaTest: Bitmap = BitmapFactory.decodeResource(
             InstrumentationRegistry.getInstrumentation().targetContext.resources,
             R.drawable.test_img
         )
 
         val slikaRezultat = Intent()
         val bundle = Bundle()
-        bundle.putParcelable("data", fotografijaZaTest)
+        bundle.putParcelable("data", slikaZaTest)
         slikaRezultat.putExtras(bundle)
 
         val rezultat = Instrumentation.ActivityResult(Activity.RESULT_OK, slikaRezultat)
@@ -363,9 +353,8 @@ class TestS2 {
         // Provjera da li je poslan intent za aplikaciju Kamera
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
         // promijenio na withId
-        onView(withId(R.id.slikaIV)).check(matches(withBitmap(fotografijaZaTest))) //vidi zasto je ovo crveno
+        onView(withId(R.id.slikaIV)).check(matches(withBitmap(slikaZaTest))) //vidi zasto je ovo crveno
 
         Intents.release()
     }
 }
-//trebaju testovi za testiranje validacije
