@@ -115,7 +115,7 @@ class TestS2 {
     }
 
     @Test
-    fun predugNaziv(){
+    fun neprhivatljivNazivBiljke(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("T"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
@@ -137,7 +137,7 @@ class TestS2 {
     }
 
     @Test
-    fun predugaPorodica(){
+    fun neprihvatljivNazivPorodice(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("Timijan"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae  (usnatice)"))
@@ -161,7 +161,7 @@ class TestS2 {
     }
 
     @Test
-    fun predugoMedUpozorenje(){
+    fun neprihvatljivoMedUpozorenje(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("Timijan"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
@@ -185,7 +185,7 @@ class TestS2 {
     }
 
     @Test
-    fun predugoJelo(){
+    fun neprihvatljivNazivJela(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
         onView(withId(R.id.nazivET)).perform(typeText("Timijan (Thymuy vulgaris)"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
