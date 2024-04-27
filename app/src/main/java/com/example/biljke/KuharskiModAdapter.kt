@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class KuharskiModAdapter(
     private var biljke: List<Biljka>,
-
     private val onItemClicked: (biljka: Biljka) -> Unit
 
 ) : RecyclerView.Adapter<KuharskiModAdapter.BiljkaViewHolder>() {
@@ -26,8 +25,6 @@ class KuharskiModAdapter(
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv;
         val idMatch: String = biljke[position].naziv
-
-//Pronalazimo id drawable elementa na osnovu id-a postera, modificirano u odnosu na vježbu
         val context: Context = holder.slikaBiljke.context
         var id: Int = context.resources
             .getIdentifier(idMatch, "drawable", context.packageName)
@@ -63,11 +60,9 @@ class KuharskiModAdapter(
     inner class BiljkaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val slikaBiljke: ImageView = itemView.findViewById(R.id.slikaItem)
         val nazivBiljke: TextView = itemView.findViewById(R.id.nazivItem)
-
         val okusBiljka: TextView = itemView.findViewById(R.id.profilOkusaItem)
         val jelo1Biljka: TextView = itemView.findViewById(R.id.jelo1Item)
         val jelo2Biljka: TextView = itemView.findViewById(R.id.jelo2Item)
         val jelo3Biljka: TextView = itemView.findViewById(R.id.jelo3Item)
-
     }
 }

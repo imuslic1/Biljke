@@ -26,10 +26,8 @@ class MainActivity : AppCompatActivity() {
     private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         //Initialize the variables
         selectMode = findViewById(R.id.modSpinner)
         biljkeRV = findViewById(R.id.biljkeRV)
@@ -41,21 +39,17 @@ class MainActivity : AppCompatActivity() {
         selectMode.adapter = ArrayAdapter(this,
             android.R.layout.simple_spinner_dropdown_item, modes)
 
-
         biljkeRV.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
             false
         )
 
-
         biljkeRV.adapter = MedicinskiModAdapter(biljkeList) { selectedBiljka ->
 
             filteredBiljke = filterBiljke(currentMode, selectedBiljka)
             updateAdapter(currentMode, filteredBiljke)
         }
-
-
 
         selectMode.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -149,8 +143,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
 }

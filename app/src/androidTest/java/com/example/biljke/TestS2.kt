@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Adapter
+import android.widget.Button
 import android.widget.ListView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
@@ -23,6 +24,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.espresso.Espresso.onData
+import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasErrorText
@@ -59,7 +61,6 @@ class TestS2 {
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
 
-
         onData(hasToString("Protuupalno - za smanjenje upale")).inAdapterView(withId(R.id.medicinskaKoristLV)).perform(click())
         onData(hasToString("Umjerena klima - topla ljeta i hladne zime")).inAdapterView(withId(R.id.klimatskiTipLV)).perform(click())
         onData(hasToString("Ilovača")).inAdapterView(withId(R.id.zemljisniTipLV)).perform(click())
@@ -70,36 +71,47 @@ class TestS2 {
         val recyclerView = activityRule.scenario.onActivity {
             val recyclerView = it.findViewById<RecyclerView>(R.id.biljkeRV)
             val itemCount = recyclerView.adapter!!.itemCount
+            //10 biljaka je vec dodano u BiljkeStaticData
             MatcherAssert.assertThat(itemCount, OrderingComparison.greaterThan(10))
-        } //10 u BiljkeStaticData
+        }
 
 
     }
     @Test
     fun izmijeniJelo(){
-        //onView(withId(R.id.novaBiljkaBtn)).perform(click())
-
         val scenario = ActivityScenario.launch(NovaBiljkaActivity::class.java)
         var adapter: Adapter? = null
+        var buttonText : String? = null
 
         scenario.onActivity { activity ->
             val listView = activity.findViewById<ListView>(R.id.jelaLV)
             adapter = listView.adapter
+            buttonText = activity.findViewById<Button>(R.id.dodajJeloBtn).text.toString()
         }
+        assert(buttonText == "Dodaj jelo")
 
         onView(withId(R.id.jeloET)).perform(typeText("Gulas"))
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
 
-        //val listView = activity.findViewById<ListView>(R.id.jelaLV)
-        //val adapter = listView.adapter
         var brojJela = adapter?.count ?: 0
         assert(brojJela == 1)
 
         onData(hasToString("Gulas")).inAdapterView(withId(R.id.jelaLV)).perform(click())
+
+        scenario.onActivity { activity ->
+            buttonText = activity.findViewById<Button>(R.id.dodajJeloBtn).text.toString()
+        }
+        assert(buttonText == "Izmijeni jelo")
+
         onView(withId(R.id.jeloET)).perform(typeText("s"))
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
+
+        scenario.onActivity { activity ->
+            buttonText = activity.findViewById<Button>(R.id.dodajJeloBtn).text.toString()
+        }
+        assert(buttonText == "Dodaj jelo")
 
         brojJela = adapter?.count ?: 0
         assert(brojJela == 1)
@@ -117,14 +129,13 @@ class TestS2 {
     @Test
     fun neprhivatljivNazivBiljke(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
-        onView(withId(R.id.nazivET)).perform(typeText("T"))
+        onView(withId(R.id.nazivET)).perform(typeText("Timijan (Thymus vulgaris)"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
         onView(withId(R.id.medicinskoUpozorenjeET)).perform(typeText("...."))
 
         onView(withId(R.id.jeloET)).perform(typeText("Gulas"))
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
-
 
         onData(hasToString("Protuupalno - za smanjenje upale")).inAdapterView(withId(R.id.medicinskaKoristLV)).perform(click())
         onData(hasToString("Umjerena klima - topla ljeta i hladne zime")).inAdapterView(withId(R.id.klimatskiTipLV)).perform(click())
@@ -150,7 +161,6 @@ class TestS2 {
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
 
-
         onData(hasToString("Protuupalno - za smanjenje upale")).inAdapterView(withId(R.id.medicinskaKoristLV)).perform(click())
         onData(hasToString("Umjerena klima - topla ljeta i hladne zime")).inAdapterView(withId(R.id.klimatskiTipLV)).perform(click())
         onData(hasToString("Ilovača")).inAdapterView(withId(R.id.zemljisniTipLV)).perform(click())
@@ -174,7 +184,6 @@ class TestS2 {
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
 
-
         onData(hasToString("Protuupalno - za smanjenje upale")).inAdapterView(withId(R.id.medicinskaKoristLV)).perform(click())
         onData(hasToString("Umjerena klima - topla ljeta i hladne zime")).inAdapterView(withId(R.id.klimatskiTipLV)).perform(click())
         onData(hasToString("Ilovača")).inAdapterView(withId(R.id.zemljisniTipLV)).perform(click())
@@ -187,14 +196,13 @@ class TestS2 {
     @Test
     fun neprihvatljivNazivJela(){
         onView(withId(R.id.novaBiljkaBtn)).perform(click())
-        onView(withId(R.id.nazivET)).perform(typeText("Timijan (Thymuy vulgaris)"))
+        onView(withId(R.id.nazivET)).perform(typeText("Timijan"))
         onView(withId(R.id.porodicaET)).perform(typeText("Lamiaceae (usnate)"))
         onView(withId(R.id.medicinskoUpozorenjeET)).perform(typeText("...."))
 
         onView(withId(R.id.jeloET)).perform(typeText("G"))
         closeSoftKeyboard()
         onView(withId(R.id.dodajJeloBtn)).perform(click())
-
 
         onData(hasToString("Protuupalno - za smanjenje upale")).inAdapterView(withId(R.id.medicinskaKoristLV)).perform(click())
         onData(hasToString("Umjerena klima - topla ljeta i hladne zime")).inAdapterView(withId(R.id.klimatskiTipLV)).perform(click())
@@ -203,6 +211,20 @@ class TestS2 {
 
         onView(withId(R.id.dodajBiljkuBtn)).perform(click())
         onView(withId(R.id.jeloET)).check(matches(hasErrorText("Naziv je neprihvatljive dužine!")))
+
+        onView(withId(R.id.jeloET)).perform(typeText("ulas s pire krompirom"))
+        closeSoftKeyboard()
+        onView(withId(R.id.dodajJeloBtn)).perform(click())
+
+        onView(withId(R.id.dodajBiljkuBtn)).perform(click())
+        onView(withId(R.id.jeloET)).check(matches(hasErrorText("Naziv je neprihvatljive dužine!")))
+
+        onView(withId(R.id.jeloET)).perform(clearText())
+        onView(withId(R.id.jeloET)).perform(typeText("Gulas"))
+        closeSoftKeyboard()
+        onView(withId(R.id.dodajJeloBtn)).perform(click())
+
+        onView(withId(R.id.dodajBiljkuBtn)).perform(click())
     }
 
     @Test
@@ -350,10 +372,8 @@ class TestS2 {
         intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(rezultat)
 
         onView(withId(R.id.uslikajBiljkuBtn)).perform(click())
-        // Provjera da li je poslan intent za aplikaciju Kamera
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-        // promijenio na withId
-        onView(withId(R.id.slikaIV)).check(matches(withBitmap(slikaZaTest))) //vidi zasto je ovo crveno
+        onView(withId(R.id.slikaIV)).check(matches(withBitmap(slikaZaTest)))
 
         Intents.release()
     }

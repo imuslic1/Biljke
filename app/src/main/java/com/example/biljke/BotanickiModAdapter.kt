@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class BotanickiModAdapter(
     private var biljke: List<Biljka>,
-
     private val onItemClicked: (biljka: Biljka) -> Unit
 
 ) : RecyclerView.Adapter<BotanickiModAdapter.BiljkaViewHolder>() {
@@ -26,20 +25,17 @@ class BotanickiModAdapter(
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv;
         val idMatch: String = biljke[position].naziv
-
-//Pronalazimo id drawable elementa na osnovu id-a postera, modificirano u odnosu na vježbu
         val context: Context = holder.slikaBiljke.context
+
         var id: Int = context.resources
             .getIdentifier(idMatch, "drawable", context.packageName)
         if (id==0) id=context.resources
             .getIdentifier("default_img", "drawable", context.packageName)
 
-
         holder.slikaBiljke.setImageResource(id)
         holder.porodicaBiljka.text = biljke[position].porodica
         holder.klimatskiTipBiljka.text = biljke[position].klimatskiTipovi[0].opis
         holder.zemljisniTipBiljka.text = biljke[position].zemljisniTipovi[0].naziv
-
         holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
     }
     fun updateBiljke(biljke: List<Biljka>) {
@@ -49,10 +45,8 @@ class BotanickiModAdapter(
     inner class BiljkaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val slikaBiljke: ImageView = itemView.findViewById(R.id.slikaItem)
         val nazivBiljke: TextView = itemView.findViewById(R.id.nazivItem)
-
         val porodicaBiljka: TextView = itemView.findViewById(R.id.porodicaItem)
         val klimatskiTipBiljka: TextView = itemView.findViewById(R.id.klimatskiTipItem)
         val zemljisniTipBiljka: TextView = itemView.findViewById(R.id.zemljisniTipItem)
-
     }
 }

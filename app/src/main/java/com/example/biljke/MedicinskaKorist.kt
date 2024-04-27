@@ -1,7 +1,6 @@
 package com.example.biljke
 
 import android.os.Parcelable
-import androidx.versionedparcelable.VersionedParcelize
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

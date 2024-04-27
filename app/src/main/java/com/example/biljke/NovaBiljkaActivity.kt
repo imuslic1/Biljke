@@ -34,8 +34,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var slikaIV : ImageView
     private val requestImageCapture = 1
 
-
-
     /**
      *  Koriste se za prikazivanje svih enum tipova za choice u odgovarajućim ListView poljima
      */
@@ -46,7 +44,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
     private val listaJela = mutableListOf<String>()
 
-    //@SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_plant)
@@ -94,16 +91,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
         val profilOkusaAdapter=ArrayAdapter(this, R.layout.lv_item_small_singlechoice, _listaProfilOkusa)
         profilOkusaLV.adapter=profilOkusaAdapter
-
-        /* DEBUGGING:
-        jelaLV.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val item =
-                parent.getItemAtPosition(position) as String
-
-            Toast.makeText(this@NovaBiljkaActivity, "Clicked item: $item", Toast.LENGTH_SHORT)
-                .show()
-        }
-         */
 
         dodajJeloBtn.setOnClickListener {
             val novoJelo = jeloET.text.toString()
@@ -171,7 +158,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     val enumValue = KlimatskiTip.getFromDescription(opis)
                     if(enumValue != null) konstrListaKlimTipEnum.add(enumValue)
                 }
-
             }
 
             /**
@@ -185,7 +171,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     val enumValue = Zemljiste.getFromName(opis)
                     if(enumValue != null) konstrListaZemljistaEnum.add(enumValue)
                 }
-
             }
 
             /**
@@ -199,9 +184,10 @@ class NovaBiljkaActivity : AppCompatActivity() {
                 if (enumValue != null) konstrProfilOkusaEnum = enumValue
             }
 
-            //za validaciju
+            /**
+             * Potrebno za validaciju
+             */
             val jelo=jeloET.text.toString()
-
             var mozeSeDodati = true
 
             /**
@@ -263,9 +249,10 @@ class NovaBiljkaActivity : AppCompatActivity() {
                 dodajBiljkuBtn.error = "Odaberite profil okusa"
             }
 
-            //nakon uspjesne validacije, ovo je nova biljka
+            /**
+             * Nakon uspjesne validacije, ovo je nova biljka
+             */
             if(mozeSeDodati) {
-
                 val novaBiljka = konstrProfilOkusaEnum?.let { it1 ->
                     Biljka(
                         konstrNaziv,
@@ -279,8 +266,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     )
                 }
                 biljkeList?.add(novaBiljka)
-
-                //DEBUGGING:
                 Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
                 val returnIntent = Intent()
@@ -288,10 +273,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     biljkeList?.let { it1 -> ArrayList(it1) })
                 setResult(Activity.RESULT_OK, returnIntent)
                 finish()
-            }
-            //DEBUGGING
-            else {
-                // Toast.makeText(this@NovaBiljkaActivity, "NEUSPJESNA VALIDACIJA", Toast.LENGTH_SHORT).show()
             }
         }
 
