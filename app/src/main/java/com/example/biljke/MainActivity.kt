@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 biljkeList = data?.getParcelableArrayListExtra("biljkeList")?: mutableListOf()
                 filteredBiljke = biljkeList
-                // Refresh your UI here
+                currentMode = "Medicinski"
+                selectMode.setSelection(0)
+                // Refresh the UI
                 updateAdapter(currentMode, biljkeList)
             }
         }
