@@ -26,6 +26,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug{
+            buildConfigField ("String", "TREFLE_API_KEY", project.properties["TREFLE_API_KEY"].toString())
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,6 +36,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures{
+        buildConfig = true
     }
 }
 
@@ -48,4 +54,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+
 }
