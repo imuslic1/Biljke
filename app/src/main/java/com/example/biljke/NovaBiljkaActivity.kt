@@ -14,6 +14,10 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class NovaBiljkaActivity : AppCompatActivity() {
     private lateinit var nazivET : EditText
@@ -193,8 +197,14 @@ class NovaBiljkaActivity : AppCompatActivity() {
             /**
              * Validacija podataka
              */
+
+            //TODO: Check if is okay
             var duzinaNazivaOk = true
-            if(konstrNaziv.length !in 2..20) { duzinaNazivaOk = false; mozeSeDodati = false }
+            if(konstrNaziv.length !in 2..40) { duzinaNazivaOk = false; mozeSeDodati = false }
+            val pattern = "\\((.*?)\\)".toRegex()
+            val matchResult = pattern.find(konstrNaziv)
+            if(matchResult == null) { duzinaNazivaOk = false; mozeSeDodati = false }
+
             if(!duzinaNazivaOk) nazivET.error = "Naziv je neprihvatljive dužine!"
 
             var duzinaPorodiceOk = true
@@ -265,6 +275,14 @@ class NovaBiljkaActivity : AppCompatActivity() {
                         konstrListaZemljistaEnum
                     )
                 }
+
+                val scope = CoroutineScope(Job() + Dispatchers.Main)
+                scope.launch {
+                    // TODO: Pokretanje coroutine-a ??? jel ovo dobro ???
+                    val dao = TrefleDAO(this.coroutineContext)
+                    var fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
+                }
+
                 biljkeList?.add(novaBiljka)
                 Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
