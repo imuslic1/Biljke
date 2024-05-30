@@ -3,6 +3,7 @@ package com.example.biljke
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import com.example.biljke.Biljka
 import kotlinx.coroutines.CoroutineScope
@@ -10,47 +11,55 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URL
 import kotlin.coroutines.CoroutineContext
 
 class TrefleDAO(
     context: Context
 ) {
-    private lateinit var defaultBitmap: Bitmap
-    private val trefle_api_key : String = BuildConfig.TREFLE_API_KEY
+    val defaultBitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.default_img)
 
-    private fun getLatinskiNaziv(
-        biljka: Biljka
-    ) : String {
+    private fun getLatinskiNaziv(biljka: Biljka) : String {
         var latinskiNaziv : String
         val input = biljka.naziv
-        val pattern = "\\((.*?)\\)".toRegex()
+        val pattern = "\\(([^)]+)\\)".toRegex()
         val matchResult = pattern.find(input)
         latinskiNaziv = matchResult!!.value.removeSurrounding("(", ")")
         return latinskiNaziv
     }
 
-    /*
-    suspend fun getImage(
-        biljka: Biljka) : Bitmap? {
+    suspend fun getImage(biljka: Biljka) : Bitmap? {
         return withContext(Dispatchers.IO) {
-            var response = ApiAdapter.retrofit.getPlant(latinskiNaziv)
-            val responseBody = response.body()
-            return@withContext responseBody
-        }
-        //TODO: podesiti u klasi Api da vraća URL slike iz web baze
-    }
-    */
+            val latinskiNaziv = getLatinskiNaziv(biljka)
+            var speciesIdByLatinList = ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
 
+            if(speciesIdByLatinList.isEmpty())
+                return@withContext defaultBitmap
+
+            var urlSlikaPretrazeneBiljke: String = speciesIdByLatinList[0].imageUrl
+
+            //Log.d(TAG, "DEBUG: povucen latinski naziv: "+ speciesIdByLatinList[0].sciName)
+
+            if(latinskiNaziv.lowercase() != speciesIdByLatinList[0].sciName.lowercase())
+                return@withContext defaultBitmap
+
+            val inputStream = URL(urlSlikaPretrazeneBiljke).openStream()
+            return@withContext BitmapFactory.decodeStream(inputStream)
+        }
+    }
 
     suspend fun fixData(biljka: Biljka): Biljka {
-
-        //TODO: zavrsiti implementaciju
+        // TODO: zavrsiti implementaciju
         // BITNO: COROUTINE SE POKREĆE PRIJE NEGO SE POZOVE OVA METODA, TAMO GDJE SE ONA POZIVA
         // CINEASTE LV8/SearchFragment
             return withContext(Dispatchers.IO) {
                 val latinskiNaziv = getLatinskiNaziv(biljka)
                 var speciesIdByLatinList =
                     ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
+
+                if(speciesIdByLatinList.isEmpty())
+                    return@withContext biljka
+
                 var idOfSearchedPlant: Int = speciesIdByLatinList[0].id
                 var speciesThatMatches: Species =
                     ApiAdapter.retrofit.getPlant(idOfSearchedPlant).body()!!.plantOfSpecies

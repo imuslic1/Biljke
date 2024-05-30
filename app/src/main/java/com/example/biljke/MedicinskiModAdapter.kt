@@ -7,6 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MedicinskiModAdapter(
     private var biljke: List<Biljka>,
@@ -24,13 +29,31 @@ class MedicinskiModAdapter(
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv;
         val idMatch: String = biljke[position].naziv
-        val context: Context = holder.slikaBiljke.context
+        /*
         var id: Int = context.resources
             .getIdentifier(idMatch, "drawable", context.packageName)
         if (id==0) id=context.resources
             .getIdentifier("default_img", "drawable", context.packageName)
 
         holder.slikaBiljke.setImageResource(id)
+        */
+
+        val context: Context = holder.slikaBiljke.context
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch {
+            val dao = TrefleDAO(context)
+            try{
+                Glide.with(context)
+                    .load(dao.getImage(biljke[position]))
+                    .into(holder.slikaBiljke)
+            }
+            catch(e : Exception){
+                Glide.with(context)
+                    .load(dao.defaultBitmap)
+                    .into(holder.slikaBiljke)
+            }
+        }
+
         holder.upozorenjeBiljka.text = biljke[position].medicinskoUpozorenje
 
         val medicinskeKoristi = biljke[position].medicinskeKoristi

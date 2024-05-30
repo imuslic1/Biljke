@@ -7,6 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class KuharskiModAdapter(
     private var biljke: List<Biljka>,
@@ -25,15 +30,35 @@ class KuharskiModAdapter(
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv;
         val idMatch: String = biljke[position].naziv
-        val context: Context = holder.slikaBiljke.context
+
+        /*
         var id: Int = context.resources
             .getIdentifier(idMatch, "drawable", context.packageName)
         if (id==0) id=context.resources
             .getIdentifier("default_img", "drawable", context.packageName)
-
-
         holder.slikaBiljke.setImageResource(id)
+        */
+
+        val context: Context = holder.slikaBiljke.context
+        //korutina
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch {
+            val dao = TrefleDAO(context)
+            try{
+                Glide.with(context)
+                    .load(dao.getImage(biljke[position]))
+                    .into(holder.slikaBiljke)
+            }
+            catch(e : Exception){
+                Glide.with(context)
+                    .load(dao.defaultBitmap)
+                    .into(holder.slikaBiljke)
+            }
+        }
+
+
         holder.okusBiljka.text = biljke[position].profilOkusa.opis
+
 
         val jelaTemp = biljke[position].jela
         holder.jelo1Biljka.text = ""
