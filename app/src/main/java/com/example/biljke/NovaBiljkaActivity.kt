@@ -294,17 +294,29 @@ class NovaBiljkaActivity : AppCompatActivity() {
                 var fixedBiljka: Biljka? = null
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
-                    // TODO: Pokretanje coroutine-a ??? jel ovo dobro ???
-                    val dao = TrefleDAO(context)
-                    fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
-                    biljkeList?.add(fixedBiljka)
-                    Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
-                    val returnIntent = Intent()
-                    returnIntent.putParcelableArrayListExtra("biljkeList",
-                        biljkeList?.let { it1 -> ArrayList(it1) })
-                    setResult(Activity.RESULT_OK, returnIntent)
-                    finish()
+                    try {
+                        val dao = TrefleDAO(context)
+                        fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
+                        biljkeList?.add(fixedBiljka)
+                        Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
+
+                        val returnIntent = Intent()
+                        returnIntent.putParcelableArrayListExtra("biljkeList",
+                            biljkeList?.let { it1 -> ArrayList(it1) })
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        finish()
+                    } catch(e: Exception) {
+                        biljkeList?.add(novaBiljka)
+                        val returnIntent = Intent()
+                        returnIntent.putParcelableArrayListExtra("biljkeList",
+                            biljkeList?.let { it1 -> ArrayList(it1) })
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        Toast.makeText(this@NovaBiljkaActivity, "Biljka dodana bez online validacije! Provjerite internet konekciju!", Toast.LENGTH_LONG).show()
+
+                        finish()
+                    }
+
 
                 }
 
