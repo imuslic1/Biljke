@@ -1,17 +1,20 @@
 package com.example.biljke
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.example.biljke.Biljka
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 class TrefleDAO(
-    context: CoroutineContext
-){
+    context: Context
+) {
     private lateinit var defaultBitmap: Bitmap
     private val trefle_api_key : String = BuildConfig.TREFLE_API_KEY
 
@@ -40,6 +43,7 @@ class TrefleDAO(
 
 
     suspend fun fixData(biljka: Biljka): Biljka {
+
         //TODO: zavrsiti implementaciju
         // BITNO: COROUTINE SE POKREĆE PRIJE NEGO SE POZOVE OVA METODA, TAMO GDJE SE ONA POZIVA
         // CINEASTE LV8/SearchFragment
@@ -49,7 +53,10 @@ class TrefleDAO(
                     ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
                 var idOfSearchedPlant: Int = speciesIdByLatinList[0].id
                 var speciesThatMatches: Species =
-                    ApiAdapter.retrofit.getPlant(idOfSearchedPlant).body()!!
+                    ApiAdapter.retrofit.getPlant(idOfSearchedPlant).body()!!.plantOfSpecies
+
+                if(latinskiNaziv.lowercase() != speciesThatMatches.latName.lowercase())
+                    return@withContext biljka
 
                 var fixedPorodica: String = biljka.porodica
                 var fixedMedicinskoUpozorenje: String = biljka.medicinskoUpozorenje
@@ -67,50 +74,50 @@ class TrefleDAO(
                     fixedJela.clear()
                 }
 
-                if(speciesThatMatches.toxic != null) {
+                if(speciesThatMatches.specifications.toxic != null) {
                     if(!biljka.medicinskoUpozorenje.lowercase().contains("toksicno"))
                         fixedMedicinskoUpozorenje += " TOKSIČNO"
                 }
 
-                if(speciesThatMatches.lightValue != null && speciesThatMatches.atmosphericHumidity != null) {
+                if(speciesThatMatches.growth.lightValue != null && speciesThatMatches.growth.atmosphericHumidity != null) {
                     fixedKlimatskiTipovi.clear()
-                    if(speciesThatMatches.lightValue in 6..9 && speciesThatMatches.atmosphericHumidity in 1..5)
+                    if(speciesThatMatches.growth.lightValue in 6..9 && speciesThatMatches.growth.atmosphericHumidity in 1..5)
                         fixedKlimatskiTipovi.add(KlimatskiTip.SREDOZEMNA)
 
-                    if(speciesThatMatches.lightValue in 6..9 && speciesThatMatches.atmosphericHumidity in 5..8)
+                    if(speciesThatMatches.growth.lightValue in 6..9 && speciesThatMatches.growth.atmosphericHumidity in 5..8)
                         fixedKlimatskiTipovi.add(KlimatskiTip.SUBTROPSKA)
 
-                    if(speciesThatMatches.lightValue in 8..10 && speciesThatMatches.atmosphericHumidity in 7..10)
+                    if(speciesThatMatches.growth.lightValue in 8..10 && speciesThatMatches.growth.atmosphericHumidity in 7..10)
                         fixedKlimatskiTipovi.add(KlimatskiTip.TROPSKA)
 
-                    if(speciesThatMatches.lightValue in 4..7 && speciesThatMatches.atmosphericHumidity in 3..7)
+                    if(speciesThatMatches.growth.lightValue in 4..7 && speciesThatMatches.growth.atmosphericHumidity in 3..7)
                         fixedKlimatskiTipovi.add(KlimatskiTip.UMJERENA)
 
-                    if(speciesThatMatches.lightValue in 7..9 && speciesThatMatches.atmosphericHumidity in 1..2)
+                    if(speciesThatMatches.growth.lightValue in 7..9 && speciesThatMatches.growth.atmosphericHumidity in 1..2)
                         fixedKlimatskiTipovi.add(KlimatskiTip.SUHA)
 
-                    if(speciesThatMatches.lightValue in 0..5 && speciesThatMatches.atmosphericHumidity in 3..7)
+                    if(speciesThatMatches.growth.lightValue in 0..5 && speciesThatMatches.growth.atmosphericHumidity in 3..7)
                         fixedKlimatskiTipovi.add(KlimatskiTip.PLANINSKA)
                 }
 
-                if(speciesThatMatches.soilTexture != null) {
+                if(speciesThatMatches.growth.soilTexture != null) {
                     fixedZemljisniTipovi.clear()
-                    if(speciesThatMatches.soilTexture == 9)
+                    if(speciesThatMatches.growth.soilTexture == 9)
                         fixedZemljisniTipovi.add(Zemljiste.SLJUNOVITO)
 
-                    else if(speciesThatMatches.soilTexture == 10)
+                    else if(speciesThatMatches.growth.soilTexture == 10)
                         fixedZemljisniTipovi.add(Zemljiste.KRECNJACKO)
 
-                    else if(speciesThatMatches.soilTexture in 1..2)
+                    else if(speciesThatMatches.growth.soilTexture in 1..2)
                         fixedZemljisniTipovi.add(Zemljiste.GLINENO)
 
-                    else if(speciesThatMatches.soilTexture in 3..4)
+                    else if(speciesThatMatches.growth.soilTexture in 3..4)
                         fixedZemljisniTipovi.add(Zemljiste.PJESKOVITO)
 
-                    else if(speciesThatMatches.soilTexture in 5..6)
+                    else if(speciesThatMatches.growth.soilTexture in 5..6)
                         fixedZemljisniTipovi.add(Zemljiste.ILOVACA)
 
-                    else if(speciesThatMatches.soilTexture in 7..8)
+                    else if(speciesThatMatches.growth.soilTexture in 7..8)
                         fixedZemljisniTipovi.add(Zemljiste.CRNICA)
                 }
 

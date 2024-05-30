@@ -1,6 +1,7 @@
 package com.example.biljke
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         resetButton = findViewById(R.id.resetBtn)
         newPlantButton = findViewById(R.id.novaBiljkaBtn)
         filteredBiljke = biljkeList
+
 
         val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
         selectMode.adapter = ArrayAdapter(this,

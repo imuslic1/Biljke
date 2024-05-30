@@ -2,7 +2,10 @@ package com.example.biljke
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,12 +17,16 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class NovaBiljkaActivity : AppCompatActivity() {
+    private val br: BroadcastReceiver = ConnectivityBroadcastReceiver()
+    private val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+
     private lateinit var nazivET : EditText
     private lateinit var porodicaET : EditText
     private lateinit var medicinskoUpozorenjeET : EditText
@@ -52,6 +59,9 @@ class NovaBiljkaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_plant)
         val biljkeList = intent.getParcelableArrayListExtra<Biljka>("biljkeList")
+
+        registerReceiver(br, filter)
+
 
         nazivET = findViewById(R.id.nazivET)
         porodicaET = findViewById(R.id.porodicaET)
@@ -201,11 +211,15 @@ class NovaBiljkaActivity : AppCompatActivity() {
             //TODO: Check if is okay
             var duzinaNazivaOk = true
             if(konstrNaziv.length !in 2..40) { duzinaNazivaOk = false; mozeSeDodati = false }
-            val pattern = "\\((.*?)\\)".toRegex()
-            val matchResult = pattern.find(konstrNaziv)
-            if(matchResult == null) { duzinaNazivaOk = false; mozeSeDodati = false }
-
             if(!duzinaNazivaOk) nazivET.error = "Naziv je neprihvatljive dužine!"
+
+
+            var latNameGiven = true
+            val pattern = "\\(([^)]+)\\)".toRegex()
+            val matchResult = pattern.find(konstrNaziv)
+            if(matchResult == null) { latNameGiven = false; mozeSeDodati = false }
+            if(!latNameGiven) nazivET.error = "Naziv biljke mora sadržavati latinski naziv!"
+
 
             var duzinaPorodiceOk = true
             if(konstrPorodica.length !in 2..20) { duzinaPorodiceOk = false; mozeSeDodati = false }
@@ -276,21 +290,26 @@ class NovaBiljkaActivity : AppCompatActivity() {
                     )
                 }
 
+                val context: Context = this
+                var fixedBiljka: Biljka? = null
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
                     // TODO: Pokretanje coroutine-a ??? jel ovo dobro ???
-                    val dao = TrefleDAO(this.coroutineContext)
-                    var fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
+                    val dao = TrefleDAO(context)
+                    fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
+                    biljkeList?.add(fixedBiljka)
+                    Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
+
+                    val returnIntent = Intent()
+                    returnIntent.putParcelableArrayListExtra("biljkeList",
+                        biljkeList?.let { it1 -> ArrayList(it1) })
+                    setResult(Activity.RESULT_OK, returnIntent)
+                    finish()
+
                 }
 
-                biljkeList?.add(novaBiljka)
-                Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
-                val returnIntent = Intent()
-                returnIntent.putParcelableArrayListExtra("biljkeList",
-                    biljkeList?.let { it1 -> ArrayList(it1) })
-                setResult(Activity.RESULT_OK, returnIntent)
-                finish()
+
             }
         }
 

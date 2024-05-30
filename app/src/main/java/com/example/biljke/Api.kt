@@ -16,5 +16,5 @@ interface Api {
     suspend fun getPlant(
         @Path("id") id: Int,
         @Query("token") api_key: String = BuildConfig.TREFLE_API_KEY
-    ): Response<Species>
+    ): Response<GetSpeciesResponse>
 }
