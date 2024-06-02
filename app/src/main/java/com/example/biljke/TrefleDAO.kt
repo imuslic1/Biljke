@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Adapter
 import com.example.biljke.Biljka
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,9 +48,6 @@ class TrefleDAO(
     }
 
     suspend fun fixData(biljka: Biljka): Biljka {
-        // TODO: zavrsiti implementaciju
-        // BITNO: COROUTINE SE POKREĆE PRIJE NEGO SE POZOVE OVA METODA, TAMO GDJE SE ONA POZIVA
-        // CINEASTE LV8/SearchFragment
             return withContext(Dispatchers.IO) {
                 val latinskiNaziv = getLatinskiNaziv(biljka)
                 var speciesIdByLatinList =
@@ -88,6 +86,23 @@ class TrefleDAO(
 
                 if(speciesThatMatches.growth.lightValue != null && speciesThatMatches.growth.atmosphericHumidity != null) {
                     fixedKlimatskiTipovi.clear()
+
+                    /* ČEKIRATI, NE RADI KAKO TREBA
+                    val conditions = listOf(
+                        Pair(6..9 to 1..5, KlimatskiTip.SREDOZEMNA),
+                        Pair(6..9 to 5..8, KlimatskiTip.SUBTROPSKA),
+                        Pair(8..10 to 7..10, KlimatskiTip.TROPSKA),
+                        Pair(4..7 to 3..7, KlimatskiTip.UMJERENA),
+                        Pair(7..9 to 1..2, KlimatskiTip.SUHA),
+                        Pair(0..5 to 3..7, KlimatskiTip.PLANINSKA)
+                    )
+
+                    for (it in conditions) {
+                        if(speciesThatMatches.growth.lightValue in it.first.first && speciesThatMatches.growth.soilTexture in it.first.second)
+                            fixedKlimatskiTipovi.add(it.second)
+                    }
+                    */
+
                     if(speciesThatMatches.growth.lightValue in 6..9 && speciesThatMatches.growth.atmosphericHumidity in 1..5)
                         fixedKlimatskiTipovi.add(KlimatskiTip.SREDOZEMNA)
 
@@ -109,6 +124,23 @@ class TrefleDAO(
 
                 if(speciesThatMatches.growth.soilTexture != null) {
                     fixedZemljisniTipovi.clear()
+
+                    /* ČEKIRATI, NE RADI KAKO TREBA
+                    val conditions = listOf(
+                        Pair(9..9, Zemljiste.SLJUNOVITO),
+                        Pair(10..10, Zemljiste.KRECNJACKO),
+                        Pair(1..2, Zemljiste.GLINENO),
+                        Pair(3..4, Zemljiste.PJESKOVITO),
+                        Pair(5..6, Zemljiste.ILOVACA),
+                        Pair(7..8, Zemljiste.CRNICA)
+                    )
+
+                    for (it in conditions) {
+                        if(speciesThatMatches.growth.soilTexture in it.first)
+                            fixedZemljisniTipovi.add(it.second)
+                    }
+                    */
+
                     if(speciesThatMatches.growth.soilTexture == 9)
                         fixedZemljisniTipovi.add(Zemljiste.SLJUNOVITO)
 
@@ -126,6 +158,7 @@ class TrefleDAO(
 
                     else if(speciesThatMatches.growth.soilTexture in 7..8)
                         fixedZemljisniTipovi.add(Zemljiste.CRNICA)
+
                 }
 
                 //  Validacija i provjera uslova:
@@ -155,4 +188,88 @@ class TrefleDAO(
             }
     }
 
+    suspend fun getPlantsWithFlowerColor(flower_color : String, substr : String) : List<Biljka> {
+        return withContext(Dispatchers.IO) {
+            var listaToReturn : MutableList<Biljka> = mutableListOf()
+            var listaDobavljenih : MutableList<Species> = mutableListOf()
+            var speciesIdByCommonNameList =
+                ApiAdapter.retrofit.getPlantsWithColor(flower_color, substr).body()!!.plantIDs
+
+            if(speciesIdByCommonNameList.isEmpty())
+                throw IllegalArgumentException("Biljka sa datim nazivom nije pronađena.")
+
+            speciesIdByCommonNameList.forEach{
+                listaDobavljenih.add(ApiAdapter.retrofit.getPlant(it.id).body()!!.plantOfSpecies)
+            }
+
+            for(it in listaDobavljenih) {
+                lateinit var biljkaZaDodati : Biljka
+                var nazivZaDodati : String?
+                if(it.name != null)
+                     nazivZaDodati = it.name + "(" + it.latName + ")"
+                else nazivZaDodati = "(" + it.latName + ")"
+                var porodicaZaDodati : String = it.family
+                val medicinskoUpozorenjeZaDodati : String = ""
+                val medicinskeKoristiZaDodati : List<MedicinskaKorist> = listOf()
+                val profilOkusaZaDodati : ProfilOkusaBiljke = ProfilOkusaBiljke.AROMATICNO
+                var jelaZaDodati : List<String> = listOf()
+                var klimatskiTipoviZaDodati : MutableList<KlimatskiTip> = mutableListOf()
+                var zemljisniTipoviZaDodati : MutableList<Zemljiste> = mutableListOf()
+
+                if(it.growth.lightValue != null && it.growth.atmosphericHumidity != null) {
+                    if(it.growth.lightValue in 6..9 && it.growth.atmosphericHumidity in 1..5)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.SREDOZEMNA)
+
+                    if(it.growth.lightValue in 6..9 && it.growth.atmosphericHumidity in 5..8)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.SUBTROPSKA)
+
+                    if(it.growth.lightValue in 8..10 && it.growth.atmosphericHumidity in 7..10)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.TROPSKA)
+
+                    if(it.growth.lightValue in 4..7 && it.growth.atmosphericHumidity in 3..7)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.UMJERENA)
+
+                    if(it.growth.lightValue in 7..9 && it.growth.atmosphericHumidity in 1..2)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.SUHA)
+
+                    if(it.growth.lightValue in 0..5 && it.growth.atmosphericHumidity in 3..7)
+                        klimatskiTipoviZaDodati.add(KlimatskiTip.PLANINSKA)
+                }
+
+                if(it.growth.soilTexture != null) {
+                    if(it.growth.soilTexture == 9)
+                        zemljisniTipoviZaDodati.add(Zemljiste.SLJUNOVITO)
+
+                    else if(it.growth.soilTexture == 10)
+                        zemljisniTipoviZaDodati.add(Zemljiste.KRECNJACKO)
+
+                    else if(it.growth.soilTexture in 1..2)
+                        zemljisniTipoviZaDodati.add(Zemljiste.GLINENO)
+
+                    else if(it.growth.soilTexture in 3..4)
+                        zemljisniTipoviZaDodati.add(Zemljiste.PJESKOVITO)
+
+                    else if(it.growth.soilTexture in 5..6)
+                        zemljisniTipoviZaDodati.add(Zemljiste.ILOVACA)
+
+                    else if(it.growth.soilTexture in 7..8)
+                        zemljisniTipoviZaDodati.add(Zemljiste.CRNICA)
+                }
+
+                biljkaZaDodati = Biljka(
+                    nazivZaDodati,
+                    porodicaZaDodati,
+                    medicinskoUpozorenjeZaDodati,
+                    medicinskeKoristiZaDodati,
+                    profilOkusaZaDodati,
+                    jelaZaDodati,
+                    klimatskiTipoviZaDodati,
+                    zemljisniTipoviZaDodati
+                )
+                listaToReturn.add(biljkaZaDodati)
+            }
+
+            return@withContext listaToReturn.toList()
+        }
+    }
 }

@@ -30,4 +30,5 @@
     <string name="fotografija">Fotografija:</string>
     <string name="substringET">Naziv:</string>
     <string name="pretragabtn">Brza pretraga</string>
+    <string name="pretragaText">Pretraga biljke:</string>
 </resources>

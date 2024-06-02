@@ -10,9 +10,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val NOVA_BILJKA_ACTIVITY_REQUEST_CODE = 0
@@ -20,18 +25,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectMode: Spinner
     private lateinit var resetButton : Button
     private lateinit var newPlantButton : Button
-    private lateinit var filteredBiljke: List<Biljka>
-    private lateinit var pretragaLinearni: LinearLayout
-    private lateinit var pretragaNazivET: EditText
-    private lateinit var bojaSpinner: Spinner
-    private lateinit var brzaPretragaButton: Button
+    private lateinit var filteredBiljke : List<Biljka>
+    private lateinit var pretragaLinearni : LinearLayout
+    private lateinit var pretragaNazivET : EditText
+    private lateinit var bojaSpinner : Spinner
+    private lateinit var brzaPretragaButton : Button
     private var selectedBiljka : Biljka? = null
-    private var currentMode: String = "medical"
+    private var currentMode : String = "medical"
+    private var selectedColor : String = "red"
+    private var pretrazenoPoBoji : Boolean = false
 
 
     private val biljkeObicne = fetchBiljke()
     private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
-    private lateinit var pretrazeneBiljkePoBoji : MutableList<Biljka>
+    private lateinit var pretrazeneBiljkePoBoji : List<Biljka>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         resetButton = findViewById(R.id.resetBtn)
         newPlantButton = findViewById(R.id.novaBiljkaBtn)
         pretragaLinearni = findViewById(R.id.pretragaLinearni)
+        pretragaLinearni.visibility = View.GONE
+
         pretragaNazivET = findViewById(R.id.pretragaET)
         bojaSpinner = findViewById(R.id.bojaSPIN)
         brzaPretragaButton = findViewById(R.id.brzaPretraga)
@@ -62,15 +71,16 @@ class MainActivity : AppCompatActivity() {
         )
 
         biljkeRV.adapter = MedicinskiModAdapter(biljkeList) { selectedBiljka ->
-
             filteredBiljke = filterBiljke(currentMode, selectedBiljka)
             updateAdapter(currentMode, filteredBiljke)
+
         }
 
         selectMode.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View,
                                         position: Int, id: Long) {
+                pretrazenoPoBoji = false
                 currentMode = parent.getItemAtPosition(position).toString()
 
                 if(currentMode == "Botanički")
@@ -83,20 +93,57 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // default view je medicinski
+                pretragaLinearni.visibility = View.GONE
                 updateAdapter("Medicinski", biljkeList)
             }
         }
 
         resetButton.setOnClickListener {
+            pretrazenoPoBoji = false
             selectedBiljka = null
             filteredBiljke = biljkeList
             updateAdapter(currentMode, biljkeList)
+
         }
 
         newPlantButton.setOnClickListener {
             val intent = Intent(this, NovaBiljkaActivity::class.java)
             intent.putParcelableArrayListExtra("biljkeList", ArrayList(biljkeList))
             startActivityForResult(intent, REQUEST_CODE)
+        }
+
+        bojaSpinner.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View,
+                                        position: Int, id: Long) {
+                selectedColor = parent.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                bojaSpinner.prompt = "Odaberite boju: "
+            }
+        }
+        brzaPretragaButton.setOnClickListener {
+            val substr : String = pretragaNazivET.text.toString()
+
+            val dao = TrefleDAO(this)
+            val scope = CoroutineScope(Job() + Dispatchers.Main)
+            if(substr != "")
+                scope.launch {
+                    try {
+                        pretrazeneBiljkePoBoji = dao.getPlantsWithFlowerColor(selectedColor, substr)
+                        updateAdapter(currentMode, pretrazeneBiljkePoBoji)
+                        pretrazenoPoBoji = true
+
+                    } catch(e: Exception) {
+                        Toast.makeText(this@MainActivity, "Neuspjela pretraga!", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            else {
+                //Toast.makeText(this@MainActivity, "Unesite naziv za pretragu", Toast.LENGTH_SHORT).show()
+                pretragaNazivET.error = "Unesite naziv za pretragu!"
+            }
         }
     }
     companion object {
@@ -118,29 +165,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun filterBiljke(mode:String, selectedBiljka: Biljka): List<Biljka> {
-        this.selectedBiljka = selectedBiljka
-        return when (mode) {
-            "Medicinski" -> {
-                filteredBiljke.filter { biljka ->
-                    biljka.medicinskeKoristi.intersect(selectedBiljka.medicinskeKoristi.toSet()).isNotEmpty()
+            this.selectedBiljka = selectedBiljka
+            return when (mode) {
+                "Medicinski" -> {
+                    filteredBiljke.filter { biljka ->
+                        biljka.medicinskeKoristi.intersect(selectedBiljka.medicinskeKoristi.toSet())
+                            .isNotEmpty()
+                    }
                 }
-            }
-            "Kuharski" -> {
-                filteredBiljke.filter { biljka ->
-                    biljka.profilOkusa == selectedBiljka.profilOkusa || biljka.jela.intersect(
-                        selectedBiljka.jela.toSet()
-                    ).isNotEmpty()
+
+                "Kuharski" -> {
+                    filteredBiljke.filter { biljka ->
+                        biljka.profilOkusa == selectedBiljka.profilOkusa || biljka.jela.intersect(
+                            selectedBiljka.jela.toSet()
+                        ).isNotEmpty()
+                    }
                 }
-            }
-            "Botanički" -> {
-                filteredBiljke.filter { biljka ->
-                    biljka.porodica == selectedBiljka.porodica && biljka.klimatskiTipovi.intersect(
-                        selectedBiljka.klimatskiTipovi.toSet()
-                    ).isNotEmpty() && biljka.zemljisniTipovi.intersect(selectedBiljka.zemljisniTipovi.toSet()).isNotEmpty()
+
+                "Botanički" -> {
+                    filteredBiljke.filter { biljka ->
+                        biljka.porodica == selectedBiljka.porodica && biljka.klimatskiTipovi.intersect(
+                            selectedBiljka.klimatskiTipovi.toSet()
+                        )
+                            .isNotEmpty() && biljka.zemljisniTipovi.intersect(selectedBiljka.zemljisniTipovi.toSet())
+                            .isNotEmpty()
+                    }
                 }
+                else -> biljkeList
             }
-            else -> biljkeList
-        }
     }
 
     private fun updateAdapter(mode: String, biljke: List<Biljka>) {
@@ -159,8 +211,10 @@ class MainActivity : AppCompatActivity() {
             }
             "Botanički" -> {
                 biljkeRV.adapter = BotanickiModAdapter(biljke) {selectedBiljka ->
-                    filteredBiljke = filterBiljke(mode, selectedBiljka)
-                    updateAdapter(mode, filteredBiljke)
+                    if(!pretrazenoPoBoji) {
+                        filteredBiljke = filterBiljke(mode, selectedBiljka)
+                        updateAdapter(mode, filteredBiljke)
+                    }
                 }
             }
         }
