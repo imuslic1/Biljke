@@ -56,13 +56,15 @@ class BotanickiModAdapter(
             }
         }
 
+        holder.porodicaBiljka.text = biljke[position].porodica
+
         if(biljke[position].klimatskiTipovi.isNotEmpty())
             holder.klimatskiTipBiljka.text = biljke[position].klimatskiTipovi[0].opis
 
         if(biljke[position].zemljisniTipovi.isNotEmpty())
             holder.zemljisniTipBiljka.text = biljke[position].zemljisniTipovi[0].naziv
 
-        holder.porodicaBiljka.text = biljke[position].porodica
+
         holder.itemView.setOnClickListener{ onItemClicked(biljke[position]) }
     }
     fun updateBiljke(biljke: List<Biljka>) {

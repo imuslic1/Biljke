@@ -206,8 +206,9 @@ class TrefleDAO(
                 lateinit var biljkaZaDodati : Biljka
                 var nazivZaDodati : String?
                 if(it.name != null)
-                     nazivZaDodati = it.name + "(" + it.latName + ")"
-                else nazivZaDodati = "(" + it.latName + ")"
+                     nazivZaDodati = it.name + " (" + it.latName + ")"
+                else nazivZaDodati = " (" + it.latName + ")"
+
                 var porodicaZaDodati : String = it.family
                 val medicinskoUpozorenjeZaDodati : String = ""
                 val medicinskeKoristiZaDodati : List<MedicinskaKorist> = listOf()
