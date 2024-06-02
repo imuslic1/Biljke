@@ -38,8 +38,6 @@ class TrefleDAO(
 
             var urlSlikaPretrazeneBiljke: String = speciesIdByLatinList[0].imageUrl
 
-            //Log.d(TAG, "DEBUG: povucen latinski naziv: "+ speciesIdByLatinList[0].sciName)
-
             if(latinskiNaziv.lowercase() != speciesIdByLatinList[0].sciName.lowercase())
                 return@withContext defaultBitmap
 
@@ -58,14 +56,14 @@ class TrefleDAO(
                     ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
 
                 if(speciesIdByLatinList.isEmpty())
-                    return@withContext biljka
+                    throw IllegalArgumentException("Biljka sa latinskim nazivom nije pronađena.")
 
                 var idOfSearchedPlant: Int = speciesIdByLatinList[0].id
                 var speciesThatMatches: Species =
                     ApiAdapter.retrofit.getPlant(idOfSearchedPlant).body()!!.plantOfSpecies
 
                 if(latinskiNaziv.lowercase() != speciesThatMatches.latName.lowercase())
-                    return@withContext biljka
+                    throw IllegalArgumentException("Biljka sa datim latinskim nazivom nije pronađena.")
 
                 var fixedPorodica: String = biljka.porodica
                 var fixedMedicinskoUpozorenje: String = biljka.medicinskoUpozorenje

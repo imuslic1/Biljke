@@ -57,7 +57,7 @@ val biljke = listOf(
     ),
 
     Biljka(
-        naziv = "Šafran (Crocus)",
+        naziv = "Šafran (Crocus sativus)",
         porodica = "Iridaceae",
         medicinskoUpozorenje = "Nije preporučljivo konzumiranje u dozama večim od 100mg dnevno kao lijek. Doze od 12 - 20g mogu izazvati smrt.",
         medicinskeKoristi = listOf(MedicinskaKorist.REGULACIJAPRITISKA, MedicinskaKorist.SMIRENJE, MedicinskaKorist.PODRSKAIMUNITETU),
@@ -90,7 +90,7 @@ val biljke = listOf(
     ),
 
     Biljka(
-        naziv = "Maslačak (Taraxacum officinale)",
+        naziv = "Maslačak (Taraxacum erythrospermum)",
         porodica = "Asteraceae (glavočike)",
         medicinskoUpozorenje = "Nije preporučljivo za osobe sa bolestima žuči.",
         medicinskeKoristi = listOf(MedicinskaKorist.PODRSKAIMUNITETU),

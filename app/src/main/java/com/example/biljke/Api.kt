@@ -6,7 +6,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface Api {
-    @GET("species/search") // potencijalno dodati search? (srč upitnik)
+    @GET("species/search")
     suspend fun getPlants(
         @Query("q") query: String,
         @Query("token") apiKey: String = BuildConfig.TREFLE_API_KEY
@@ -17,4 +17,8 @@ interface Api {
         @Path("id") id: Int,
         @Query("token") api_key: String = BuildConfig.TREFLE_API_KEY
     ): Response<GetSpeciesResponse>
+
+    //TODO: implementirati search po common_name pa zatim lokalno pretraziti iz dobivene liste sve biljke koje imaju trazenu boju cvijeta
+
+
 }

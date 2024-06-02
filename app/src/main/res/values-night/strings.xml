@@ -11,4 +11,6 @@
     <string name="botanicFamily" />
     <string name="botanicClimate" />
     <string name="botanicSoilType" />
+    <string name="substringET">Naziv:</string>
+    <string name="pretragabtn">Brza pretraga</string>
 </resources>

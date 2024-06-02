@@ -1,13 +1,14 @@
 package com.example.biljke
 
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,11 +21,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var resetButton : Button
     private lateinit var newPlantButton : Button
     private lateinit var filteredBiljke: List<Biljka>
+    private lateinit var pretragaLinearni: LinearLayout
+    private lateinit var pretragaNazivET: EditText
+    private lateinit var bojaSpinner: Spinner
+    private lateinit var brzaPretragaButton: Button
     private var selectedBiljka : Biljka? = null
     private var currentMode: String = "medical"
 
+
     private val biljkeObicne = fetchBiljke()
     private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
+    private lateinit var pretrazeneBiljkePoBoji : MutableList<Biljka>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +41,19 @@ class MainActivity : AppCompatActivity() {
         biljkeRV = findViewById(R.id.biljkeRV)
         resetButton = findViewById(R.id.resetBtn)
         newPlantButton = findViewById(R.id.novaBiljkaBtn)
+        pretragaLinearni = findViewById(R.id.pretragaLinearni)
+        pretragaNazivET = findViewById(R.id.pretragaET)
+        bojaSpinner = findViewById(R.id.bojaSPIN)
+        brzaPretragaButton = findViewById(R.id.brzaPretraga)
         filteredBiljke = biljkeList
 
+        val colorModes = arrayOf("red", "blue", "yellow", "orange", "purple", "brown", "green")
+        bojaSpinner.adapter = ArrayAdapter(this,
+            android.R.layout.simple_spinner_dropdown_item, colorModes)
 
-        val modes = arrayOf("Medicinski", "Kuharski", "Botanički")
+        val viewModes = arrayOf("Medicinski", "Kuharski", "Botanički")
         selectMode.adapter = ArrayAdapter(this,
-            android.R.layout.simple_spinner_dropdown_item, modes)
+            android.R.layout.simple_spinner_dropdown_item, viewModes)
 
         biljkeRV.layoutManager = LinearLayoutManager(
             this,
@@ -58,6 +72,10 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View,
                                         position: Int, id: Long) {
                 currentMode = parent.getItemAtPosition(position).toString()
+
+                if(currentMode == "Botanički")
+                    pretragaLinearni.visibility = View.VISIBLE
+                else pretragaLinearni.visibility = View.GONE
 
                 val biljke = selectedBiljka?.let { filteredBiljke } ?: biljkeList
                 updateAdapter(currentMode, biljke)

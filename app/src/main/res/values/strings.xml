@@ -13,7 +13,7 @@
     <string name="botanicFamily" />
     <string name="botanicClimate" />
     <string name="botanicSoilType" />
-    <string name="newPlant">New Plant</string>
+    <string name="addPlant">Add Plant</string>
     <string name="nazivET">Naziv:</string>
     <string name="porodicaET">Porodica:</string>
     <string name="medicinskoUpozorenjeET">Medicinsko upozorenje:</string>
@@ -28,4 +28,6 @@
     <string name="jela">Jela:</string>
     <string name="profilOkusa">Profil okusa:</string>
     <string name="fotografija">Fotografija:</string>
+    <string name="substringET">Naziv:</string>
+    <string name="pretragabtn">Brza pretraga</string>
 </resources>

@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 class NovaBiljkaActivity : AppCompatActivity() {
     private val br: BroadcastReceiver = ConnectivityBroadcastReceiver()
@@ -294,7 +295,6 @@ class NovaBiljkaActivity : AppCompatActivity() {
                 var fixedBiljka: Biljka? = null
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
-
                     try {
                         val dao = TrefleDAO(context)
                         fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
@@ -306,22 +306,24 @@ class NovaBiljkaActivity : AppCompatActivity() {
                             biljkeList?.let { it1 -> ArrayList(it1) })
                         setResult(Activity.RESULT_OK, returnIntent)
                         finish()
-                    } catch(e: Exception) {
-                        biljkeList?.add(novaBiljka)
+                    }
+                    catch(e: IllegalArgumentException){
+                        Toast.makeText(this@NovaBiljkaActivity, e.message + "Biljka nije dodana.", Toast.LENGTH_SHORT).show()
                         val returnIntent = Intent()
                         returnIntent.putParcelableArrayListExtra("biljkeList",
                             biljkeList?.let { it1 -> ArrayList(it1) })
                         setResult(Activity.RESULT_OK, returnIntent)
-                        Toast.makeText(this@NovaBiljkaActivity, "Biljka dodana bez online validacije! Provjerite internet konekciju!", Toast.LENGTH_LONG).show()
-
                         finish()
                     }
-
-
+                    catch(e: Exception) {
+                        val returnIntent = Intent()
+                        returnIntent.putParcelableArrayListExtra("biljkeList",
+                            biljkeList?.let { it1 -> ArrayList(it1) })
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        Toast.makeText(this@NovaBiljkaActivity, "Biljka se ne može validirati! Provjerite internet konekciju.", Toast.LENGTH_LONG).show()
+                        finish()
+                    }
                 }
-
-
-
             }
         }
 
