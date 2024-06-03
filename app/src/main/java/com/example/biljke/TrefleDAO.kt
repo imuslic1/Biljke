@@ -1,24 +1,21 @@
 package com.example.biljke
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
-import android.widget.Adapter
-import com.example.biljke.Biljka
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
-import kotlin.coroutines.CoroutineContext
 
-class TrefleDAO(
-    context: Context
-) {
-    val defaultBitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.default_img)
+class TrefleDAO {
+    private lateinit var context: Context
+    lateinit var defaultBitmap: Bitmap
+    fun setContext(context: Context) {
+        this.context = context
+        defaultBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.default_img)
+    }
+
+
 
     private fun getLatinskiNaziv(biljka: Biljka) : String {
         var latinskiNaziv : String
@@ -188,7 +185,7 @@ class TrefleDAO(
             }
     }
 
-    suspend fun getPlantsWithFlowerColor(flower_color : String, substr : String) : List<Biljka> {
+    suspend fun getPlantswithFlowerColor(flower_color : String, substr : String) : List<Biljka> {
         return withContext(Dispatchers.IO) {
             var listaToReturn : MutableList<Biljka> = mutableListOf()
             var listaDobavljenih : MutableList<Species> = mutableListOf()

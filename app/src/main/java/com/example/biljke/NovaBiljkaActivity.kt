@@ -296,7 +296,8 @@ class NovaBiljkaActivity : AppCompatActivity() {
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
                     try {
-                        val dao = TrefleDAO(context)
+                        val dao = TrefleDAO()
+                        dao.setContext(context)
                         fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
                         biljkeList?.add(fixedBiljka)
                         Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()

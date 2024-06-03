@@ -62,5 +62,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
+    testImplementation ("org.assertj:assertj-core:3.22.0")
+
 
 }

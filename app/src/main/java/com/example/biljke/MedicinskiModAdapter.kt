@@ -27,7 +27,7 @@ class MedicinskiModAdapter(
     }
     override fun getItemCount(): Int = biljke.size
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
-        holder.nazivBiljke.text = biljke[position].naziv;
+        holder.nazivBiljke.text = biljke[position].naziv
         val idMatch: String = biljke[position].naziv
         /*
         var id: Int = context.resources
@@ -40,9 +40,11 @@ class MedicinskiModAdapter(
 
         val context: Context = holder.slikaBiljke.context
         val scope = CoroutineScope(Job() + Dispatchers.Main)
+        val dao = TrefleDAO()
+        dao.setContext(context)
         scope.launch {
-            val dao = TrefleDAO(context)
             try{
+                dao.setContext(context)
                 Glide.with(context)
                     .load(dao.getImage(biljke[position]))
                     .into(holder.slikaBiljke)

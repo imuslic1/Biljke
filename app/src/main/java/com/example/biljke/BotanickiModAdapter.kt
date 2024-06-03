@@ -43,7 +43,8 @@ class BotanickiModAdapter(
         val context: Context = holder.slikaBiljke.context
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
-            val dao = TrefleDAO(context)
+            val dao = TrefleDAO()
+            dao.setContext(context)
             try{
                 Glide.with(context)
                     .load(dao.getImage(biljke[position]))

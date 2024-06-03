@@ -126,12 +126,13 @@ class MainActivity : AppCompatActivity() {
         brzaPretragaButton.setOnClickListener {
             val substr : String = pretragaNazivET.text.toString()
 
-            val dao = TrefleDAO(this)
+            val dao = TrefleDAO()
+            dao.setContext(this)
             val scope = CoroutineScope(Job() + Dispatchers.Main)
             if(substr != "")
                 scope.launch {
                     try {
-                        pretrazeneBiljkePoBoji = dao.getPlantsWithFlowerColor(selectedColor, substr)
+                        pretrazeneBiljkePoBoji = dao.getPlantswithFlowerColor(selectedColor, substr)
                         updateAdapter(currentMode, pretrazeneBiljkePoBoji)
                         pretrazenoPoBoji = true
 
