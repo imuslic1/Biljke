@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
             selectedBiljka = null
             filteredBiljke = biljkeList
             updateAdapter(currentMode, biljkeList)
-
         }
 
         newPlantButton.setOnClickListener {
