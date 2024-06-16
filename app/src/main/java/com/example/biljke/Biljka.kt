@@ -19,7 +19,7 @@ data class Biljka (
     @ColumnInfo(name = "dishes")            val jela: List<String>,
     @ColumnInfo(name = "climates")          val klimatskiTipovi: List<KlimatskiTip>,
     @ColumnInfo(name = "soils")             val zemljisniTipovi: List<Zemljiste>,
-    @ColumnInfo(name = "onlineChecked")     var onlineChecked : Boolean
+    @ColumnInfo(name = "onlineChecked")     var onlineChecked : Boolean = false
 
 
 ) : Parcelable

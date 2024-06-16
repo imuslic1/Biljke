@@ -36,16 +36,7 @@ abstract class BiljkaDatabase : RoomDatabase() {
             ).build()
     }
 
-
-
-
-
-
-
-
-
-
     inner class BiljkaDAO {
-
+        
     }
 }

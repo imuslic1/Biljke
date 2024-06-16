@@ -280,14 +280,14 @@ class NovaBiljkaActivity : AppCompatActivity() {
             if(mozeSeDodati) {
                 val novaBiljka = konstrProfilOkusaEnum?.let { it1 ->
                     Biljka(
-                        konstrNaziv,
-                        konstrPorodica,
-                        konstrUpozorenje,
-                        konstrListaMedKoristEnum,
-                        it1,
-                        listaJela,
-                        konstrListaKlimTipEnum,
-                        konstrListaZemljistaEnum
+                        naziv = konstrNaziv,
+                        porodica = konstrPorodica,
+                        medicinskoUpozorenje = konstrUpozorenje,
+                        medicinskeKoristi = konstrListaMedKoristEnum,
+                        profilOkusa = it1,
+                        jela = listaJela,
+                        klimatskiTipovi = konstrListaKlimTipEnum,
+                        zemljisniTipovi = konstrListaZemljistaEnum
                     )
                 }
 

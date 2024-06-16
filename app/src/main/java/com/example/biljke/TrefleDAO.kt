@@ -172,14 +172,14 @@ class TrefleDAO {
                 //        * ako nije null, kreiraj novu listu s jednim elementom (jedino odgovarajuce
                 //          zemljiste
 
-                var fixedBiljka = Biljka(biljka.naziv,
-                                         fixedPorodica,
-                                         fixedMedicinskoUpozorenje,
-                                         biljka.medicinskeKoristi,
-                                         biljka.profilOkusa,
-                                         fixedJela,
-                                         fixedKlimatskiTipovi,
-                                         fixedZemljisniTipovi)
+                var fixedBiljka = Biljka(naziv = biljka.naziv,
+                                         porodica = fixedPorodica,
+                                         medicinskoUpozorenje = fixedMedicinskoUpozorenje,
+                                         medicinskeKoristi = biljka.medicinskeKoristi,
+                                         profilOkusa = biljka.profilOkusa,
+                                         jela = fixedJela,
+                                         klimatskiTipovi = fixedKlimatskiTipovi,
+                                         zemljisniTipovi = fixedZemljisniTipovi)
 
                 return@withContext fixedBiljka
             }
@@ -255,14 +255,14 @@ class TrefleDAO {
                 }
 
                 biljkaZaDodati = Biljka(
-                    nazivZaDodati,
-                    porodicaZaDodati,
-                    medicinskoUpozorenjeZaDodati,
-                    medicinskeKoristiZaDodati,
-                    profilOkusaZaDodati,
-                    jelaZaDodati,
-                    klimatskiTipoviZaDodati,
-                    zemljisniTipoviZaDodati
+                    naziv = nazivZaDodati,
+                    porodica = porodicaZaDodati,
+                    medicinskoUpozorenje = medicinskoUpozorenjeZaDodati,
+                    medicinskeKoristi = medicinskeKoristiZaDodati,
+                    profilOkusa = profilOkusaZaDodati,
+                    jela = jelaZaDodati,
+                    klimatskiTipovi = klimatskiTipoviZaDodati,
+                    zemljisniTipovi = zemljisniTipoviZaDodati
                 )
                 listaToReturn.add(biljkaZaDodati)
             }
