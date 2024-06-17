@@ -28,19 +28,18 @@ interface RoomDAO {
     @Query("SELECT * FROM BILJKA WHERE onlineChecked = 0")
     suspend fun getUnchecked() : List<Biljka>
 
-    @Query("SELECT * FROM BiljkaBitmap WHERE bitmap = :bitmap LIMIT 1")
-    suspend fun getBitmap(bitmap: ByteArray) : List<ByteArray>
+    @Query("SELECT * FROM BiljkaBitmap WHERE idBiljke = :id LIMIT 1")
+    suspend fun doesBitmapExist(id: Long) : List<BiljkaBitmap>
 
-    //provjeriti da li radi kako treba, možda da se ipak korsiti query
+    @Query("SELECT bitmap FROM BiljkaBitmap WHERE idBiljke = :id")
+    suspend fun getBitmapById(id : Long) : ByteArray
+
+    @Query("SELECT * FROM Biljka WHERE naziv = :naziv LIMIT 1")
+    suspend fun getPlantByName(naziv: String) : List<Biljka>
+
+    //provjeriti da li radi kako treba, možda da se ipak koristi query
     @Update
     suspend fun updateChecked(updatedBiljke : List<Biljka>)
-
-
-
-
-    @Transaction
-    @Query("SELECT * FROM Biljka")
-    suspend fun getBiljkaAndBitmapById() : List<BiljkaWithBiljkaBitmap>
 
 
 

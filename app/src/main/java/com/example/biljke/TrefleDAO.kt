@@ -179,7 +179,8 @@ class TrefleDAO {
                                          profilOkusa = biljka.profilOkusa,
                                          jela = fixedJela,
                                          klimatskiTipovi = fixedKlimatskiTipovi,
-                                         zemljisniTipovi = fixedZemljisniTipovi)
+                                         zemljisniTipovi = fixedZemljisniTipovi,
+                                         onlineChecked = true)
 
                 return@withContext fixedBiljka
             }

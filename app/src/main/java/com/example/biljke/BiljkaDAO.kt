@@ -2,6 +2,7 @@ package com.example.biljke
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.room.Dao
 import com.example.biljke.MyConverter.BitmapConverter
 import kotlinx.coroutines.Dispatchers
@@ -10,18 +11,16 @@ import java.util.stream.Collectors.toList
 
 @Dao
 interface BiljkaDAO {
-
-    var _context : Context
-
-    private fun setContext(context: Context) {
-        this._context = context
-    }
-
     suspend fun saveBiljka(biljka: Biljka) : Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val db = BiljkaDatabase.getInstance(_context)
-                biljka.id = db.roomDao().saveBiljka(biljka)
+                val context = ContextProvider.getContext()
+                val db = BiljkaDatabase.getInstance(context)
+                val daLiImaUBazi : List<Biljka> = db.roomDao().getPlantByName(biljka.naziv)
+
+                if(daLiImaUBazi.isEmpty())
+                    biljka.id = db.roomDao().saveBiljka(biljka)
+
                 true
             } catch(e : Exception) {
                 false
@@ -33,10 +32,11 @@ interface BiljkaDAO {
         var count : Int = 0
         return withContext(Dispatchers.IO) {
             try {
+                val context = ContextProvider.getContext()
                 val trefle = TrefleDAO()
-                trefle.setContext(_context)
+                trefle.setContext(context)
 
-                val db = BiljkaDatabase.getInstance(_context)
+                val db = BiljkaDatabase.getInstance(context)
                 var plantsToUpdate : MutableList<Biljka> = db.roomDao().getUnchecked().toMutableList()
                 var updatedPlants : MutableList<Biljka> = mutableListOf()
 
@@ -67,31 +67,52 @@ interface BiljkaDAO {
     suspend fun addImage(idBiljke:Long, bitmap : Bitmap) : Boolean{
         return withContext(Dispatchers.IO) {
             try {
-                val db = BiljkaDatabase.getInstance(_context)
+                val context = ContextProvider.getContext()
+                val db = BiljkaDatabase.getInstance(context)
 
                 var biljkaId : List<Biljka> = db.roomDao().getById(idBiljke)
                 if(biljkaId.isEmpty())
                     return@withContext false
-                lateinit var converter : BitmapConverter
 
-                var bitmapDB : List<ByteArray> = db.roomDao().getBitmap(converter.fromBitmap(bitmap))
+
+                var bitmapDB : List<BiljkaBitmap> = db.roomDao().doesBitmapExist(idBiljke)
                 if(bitmapDB.isNotEmpty())
                     return@withContext false
 
-                db.roomDao().saveBitmap(BiljkaBitmap(idBiljke= idBiljke, bitmap = bitmap))
+                var byteArrayFromBitmap : ByteArray = BitmapConverter().fromBitmap(bitmap)
+
+                db.roomDao().saveBitmap(BiljkaBitmap(idBiljke= idBiljke, bitmap = byteArrayFromBitmap))
 
                 true
 
             } catch(e : Exception) {
+                Log.d("MainActivity", "exception: " + e.message)
                 false
             }
+        }
+    }
+
+    suspend fun getImageFromDB(idBiljke: Long) : Bitmap {
+        return withContext(Dispatchers.IO) {
+            lateinit var bitmap : Bitmap
+            try {
+                val context = ContextProvider.getContext()
+                val db = BiljkaDatabase.getInstance(context)
+
+                bitmap = BitmapConverter().toBitmap(db.roomDao().getBitmapById(idBiljke))
+            } catch(e : Exception) {
+                throw e
+            }
+
+            return@withContext bitmap;
         }
     }
 
     suspend fun getAllBiljkas() : List<Biljka> {
         return withContext(Dispatchers.IO) {
             try {
-                val db = BiljkaDatabase.getInstance(_context)
+                val context = ContextProvider.getContext()
+                val db = BiljkaDatabase.getInstance(context)
                 return@withContext db.roomDao().getAll()
 
             } catch (e: Exception) {
@@ -103,7 +124,8 @@ interface BiljkaDAO {
     suspend fun clearData(){
         return withContext(Dispatchers.IO) {
             try {
-                val db = BiljkaDatabase.getInstance(_context)
+                val context = ContextProvider.getContext()
+                val db = BiljkaDatabase.getInstance(context)
                 return@withContext db.roomDao().deleteAll()
 
             } catch (e: Exception) {
@@ -111,7 +133,5 @@ interface BiljkaDAO {
             }
         }
     }
-
-
 
 }

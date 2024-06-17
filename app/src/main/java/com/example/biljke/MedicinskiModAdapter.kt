@@ -1,6 +1,7 @@
 package com.example.biljke
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,24 +30,19 @@ class MedicinskiModAdapter(
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv
         val idMatch: String = biljke[position].naziv
-        /*
-        var id: Int = context.resources
-            .getIdentifier(idMatch, "drawable", context.packageName)
-        if (id==0) id=context.resources
-            .getIdentifier("default_img", "drawable", context.packageName)
-
-        holder.slikaBiljke.setImageResource(id)
-        */
 
         val context: Context = holder.slikaBiljke.context
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         val dao = TrefleDAO()
         dao.setContext(context)
+        val db = BiljkaDatabase.getInstance(ContextProvider.getContext())
+
         scope.launch {
             try{
                 dao.setContext(context)
+
                 Glide.with(context)
-                    .load(dao.getImage(biljke[position]))
+                    .load(db.biljkaDao().getImageFromDB(biljke[position].id!!))
                     .into(holder.slikaBiljke)
             }
             catch(e : Exception){
@@ -55,6 +51,10 @@ class MedicinskiModAdapter(
                     .into(holder.slikaBiljke)
             }
         }
+
+
+
+
 
         holder.upozorenjeBiljka.text = biljke[position].medicinskoUpozorenje
 

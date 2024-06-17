@@ -29,26 +29,23 @@ class BotanickiModAdapter(
     override fun getItemCount(): Int = biljke.size
     override fun onBindViewHolder(holder: BiljkaViewHolder, position: Int) {
         holder.nazivBiljke.text = biljke[position].naziv;
-        val idMatch: String = biljke[position].naziv
-
-        /*
-        var id: Int = context.resources
-            .getIdentifier(idMatch, "drawable", context.packageName)
-        if (id==0) id=context.resources
-            .getIdentifier("default_img", "drawable", context.packageName)
-
-        holder.slikaBiljke.setImageResource(id)
-         */
 
         val context: Context = holder.slikaBiljke.context
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
             val dao = TrefleDAO()
             dao.setContext(context)
+            val db = BiljkaDatabase.getInstance(ContextProvider.getContext())
             try{
-                Glide.with(context)
-                    .load(dao.getImage(biljke[position]))
-                    .into(holder.slikaBiljke)
+                if(biljke[position].id != null)
+                    Glide.with(context)
+                        .load(db.biljkaDao().getImageFromDB(biljke[position].id!!))
+                        .into(holder.slikaBiljke)
+                else {
+                    Glide.with(context)
+                        .load(dao.getImage(biljke[position]))
+                        .into(holder.slikaBiljke)
+                }
             }
             catch(e : Exception){
                 Glide.with(context)

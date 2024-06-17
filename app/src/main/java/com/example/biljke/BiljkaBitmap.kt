@@ -17,11 +17,8 @@ import androidx.room.TypeConverters
 )
 
 class BiljkaBitmap (
-    @PrimaryKey(autoGenerate = true) var id : Long? = null,
-
-    @ColumnInfo("idBiljke") val idBiljke : Long,
-
-    @ColumnInfo("bitmap")
-    var bitmap : Bitmap
+    @PrimaryKey(autoGenerate = true)  var id : Long? = null,
+    @ColumnInfo("idBiljke")     val idBiljke : Long,
+    @ColumnInfo("bitmap")       var bitmap : ByteArray
 )
 

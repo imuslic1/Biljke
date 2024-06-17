@@ -293,6 +293,8 @@ class NovaBiljkaActivity : AppCompatActivity() {
 
                 val context: Context = this
                 var fixedBiljka: Biljka? = null
+                val DB = BiljkaDatabase.getInstance(this)
+                val biljkaDao = DB.biljkaDao()
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
                     try {
@@ -300,27 +302,34 @@ class NovaBiljkaActivity : AppCompatActivity() {
                         dao.setContext(context)
                         fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
                         biljkeList?.add(fixedBiljka)
+                        biljkaDao.saveBiljka(fixedBiljka!!)
                         Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
-                        val returnIntent = Intent()
+                        /*val returnIntent = Intent()
                         returnIntent.putParcelableArrayListExtra("biljkeList",
                             biljkeList?.let { it1 -> ArrayList(it1) })
-                        setResult(Activity.RESULT_OK, returnIntent)
+
+                         */
+                        setResult(Activity.RESULT_OK, intent)
                         finish()
                     }
                     catch(e: IllegalArgumentException){
                         Toast.makeText(this@NovaBiljkaActivity, e.message + "Biljka nije dodana.", Toast.LENGTH_SHORT).show()
-                        val returnIntent = Intent()
-                        returnIntent.putParcelableArrayListExtra("biljkeList",
-                            biljkeList?.let { it1 -> ArrayList(it1) })
-                        setResult(Activity.RESULT_OK, returnIntent)
+                        /*val returnIntent = Intent()
+                       returnIntent.putParcelableArrayListExtra("biljkeList",
+                           biljkeList?.let { it1 -> ArrayList(it1) })
+
+                        */
+                        setResult(Activity.RESULT_OK, intent)
                         finish()
                     }
                     catch(e: Exception) {
-                        val returnIntent = Intent()
+                        /*val returnIntent = Intent()
                         returnIntent.putParcelableArrayListExtra("biljkeList",
                             biljkeList?.let { it1 -> ArrayList(it1) })
-                        setResult(Activity.RESULT_OK, returnIntent)
+
+                         */
+                        setResult(Activity.RESULT_OK, intent)
                         Toast.makeText(this@NovaBiljkaActivity, "Biljka se ne može validirati! Provjerite internet konekciju.", Toast.LENGTH_LONG).show()
                         finish()
                     }

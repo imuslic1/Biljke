@@ -1,8 +1,11 @@
 package com.example.biljke
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -14,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.biljke.MyConverter.BitmapConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pretragaNazivET : EditText
     private lateinit var bojaSpinner : Spinner
     private lateinit var brzaPretragaButton : Button
+    private lateinit var DB : BiljkaDatabase
     private var selectedBiljka : Biljka? = null
     private var currentMode : String = "medical"
     private var selectedColor : String = "red"
@@ -37,12 +42,46 @@ class MainActivity : AppCompatActivity() {
 
 
     private val biljkeObicne = fetchBiljke()
-    private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
+    //private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
+    private var biljkeList: MutableList<Biljka> = mutableListOf()
     private lateinit var pretrazeneBiljkePoBoji : List<Biljka>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ContextProvider.initialize(this)
+
+        //Initialize the DB
+        DB = BiljkaDatabase.getInstance(this)
+        val biljkaDao = DB.biljkaDao()
+        val roomDao = DB.roomDao()
+        val dao = TrefleDAO()
+        dao.setContext(this)
+        lateinit var converter: BitmapConverter
+
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch {
+            val result = biljkaDao.getAllBiljkas().toMutableList()
+
+            when(result) {
+                is List<Biljka> -> onFetchPlantsIntoDBSuccess(result)
+                else -> onError()
+            }
+
+            val job2 = launch {
+                for(biljka in biljkeList) {
+                    val TAG = "MainActivity"
+                    var bitmap : Bitmap = dao.getImage(biljka)!!
+                    val result = DB.biljkaDao().addImage(biljka.id!!, bitmap)
+                }
+                updateAdapter(currentMode, biljkeList)
+            }
+            job2.join()
+        }
+
+
+
         //Initialize the variables
         selectMode = findViewById(R.id.modSpinner)
         biljkeRV = findViewById(R.id.biljkeRV)
@@ -54,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         pretragaNazivET = findViewById(R.id.pretragaET)
         bojaSpinner = findViewById(R.id.bojaSPIN)
         brzaPretragaButton = findViewById(R.id.brzaPretraga)
+
         filteredBiljke = biljkeList
 
         val colorModes = arrayOf("red", "blue", "yellow", "orange", "purple", "brown", "green")
@@ -73,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         biljkeRV.adapter = MedicinskiModAdapter(biljkeList) { selectedBiljka ->
             filteredBiljke = filterBiljke(currentMode, selectedBiljka)
             updateAdapter(currentMode, filteredBiljke)
-
         }
 
         selectMode.onItemSelectedListener = object :
@@ -99,6 +138,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         resetButton.setOnClickListener {
+            pretragaNazivET.text.clear()
             pretrazenoPoBoji = false
             selectedBiljka = null
             filteredBiljke = biljkeList
@@ -146,6 +186,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun onFetchPlantsIntoDBSuccess(plants : MutableList<Biljka>) {
+        biljkeList = plants
+        updateAdapter(currentMode, biljkeList)
+    }
+
+    fun onError() {
+        Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_SHORT).show()
+    }
+
     companion object {
         const val REQUEST_CODE = 0
     }
@@ -154,6 +204,30 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == NOVA_BILJKA_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
+
+                val biljkaDao = DB.biljkaDao()
+                val dao = TrefleDAO()
+                dao.setContext(this)
+
+                val scope = CoroutineScope(Job()+Dispatchers.Main)
+                scope.launch {
+                    val result = biljkaDao.getAllBiljkas().toMutableList()
+
+                    when(result) {
+                        is List<Biljka> -> onFetchPlantsIntoDBSuccess(result)
+                        else -> onError()
+                    }
+
+                    val job2 = launch {
+                        for(biljka in biljkeList) {
+                            var bitmap : Bitmap = dao.getImage(biljka)!!
+                            val result = DB.biljkaDao().addImage(biljka.id!!, bitmap)
+                        }
+                        updateAdapter(currentMode, biljkeList)
+                    }
+                    job2.join()
+                }
+
                 biljkeList = data?.getParcelableArrayListExtra("biljkeList")?: mutableListOf()
                 filteredBiljke = biljkeList
                 currentMode = "Medicinski"
