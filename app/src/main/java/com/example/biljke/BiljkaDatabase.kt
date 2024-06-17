@@ -16,8 +16,8 @@ import androidx.room.TypeConverters
     MyConverter.BitmapConverter::class,
 )
 abstract class BiljkaDatabase : RoomDatabase() {
-    abstract fun biljkaDao(): BiljkaDao
-    abstract fun biljkaBitmapDao(): BiljkaBitmapDao
+    abstract fun biljkaDao(): BiljkaDAO
+    abstract fun roomDao(): RoomDAO
     companion object {
         private var INSTANCE: BiljkaDatabase? = null
         fun getInstance(context: Context): BiljkaDatabase {
@@ -28,15 +28,12 @@ abstract class BiljkaDatabase : RoomDatabase() {
             }
             return INSTANCE!!
         }
+
         private fun buildRoomDB(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
                 BiljkaDatabase::class.java,
                 "biljke-db"
             ).build()
-    }
-
-    inner class BiljkaDAO {
-        
     }
 }
