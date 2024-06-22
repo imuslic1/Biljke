@@ -133,5 +133,4 @@ interface BiljkaDAO {
             }
         }
     }
-
 }

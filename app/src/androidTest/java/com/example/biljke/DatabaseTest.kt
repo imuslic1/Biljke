@@ -45,13 +45,13 @@ class DatabaseTest {
         val vel : Int = biljkaDAO.getAllBiljkas().size
         biljkaDAO.saveBiljka(
             Biljka(
-                naziv = "naziv",
-                porodica = "porodica",
-                medicinskoUpozorenje = "warn",
-                medicinskeKoristi = listOf(MedicinskaKorist.PROTUUPALNO),
+                naziv = "Ružmarin (Rosmarinus officinalis)",
+                porodica = "Lamiaceae (metvice)",
+                medicinskoUpozorenje = "Treba ga koristiti umjereno i konsultovati se sa ljekarom pri dugotrajnoj upotrebi ili upotrebi u većim količinama.",
+                medicinskeKoristi = listOf(MedicinskaKorist.PROTUUPALNO, MedicinskaKorist.REGULACIJAPRITISKA),
                 profilOkusa = ProfilOkusaBiljke.AROMATICNO,
-                jela = listOf("Grah"),
-                klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA),
+                jela = listOf("Pečeno pile", "Grah", "Gulaš"),
+                klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA, KlimatskiTip.SUHA),
                 zemljisniTipovi = listOf(Zemljiste.SLJUNOVITO, Zemljiste.KRECNJACKO)
             )
         )
@@ -69,14 +69,14 @@ class DatabaseTest {
     fun insertBiljkaUListu() = runBlocking {
         val vel : Int = biljkaDAO.getAllBiljkas().size
         val novaBiljka = Biljka(
-            naziv = "Ruzmarin (Rosmarinus officinalis)2",
+            naziv = "Nanaa (Mentha spicata)",
             porodica = "Lamiaceae (metvice)",
-            medicinskoUpozorenje = "Treba ga koristiti umjereno i konsultovati se sa ljekarom pri dugotrajnoj upotrebi ili upotrebi u većim količinama.",
-            medicinskeKoristi = listOf(MedicinskaKorist.PROTUUPALNO, MedicinskaKorist.REGULACIJAPRITISKA),
-            profilOkusa = ProfilOkusaBiljke.AROMATICNO,
-            jela = listOf("Pečeno pile", "Grah", "Gulaš"),
-            klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA, KlimatskiTip.SUHA),
-            zemljisniTipovi = listOf(Zemljiste.SLJUNOVITO, Zemljiste.KRECNJACKO)
+            medicinskoUpozorenje = "Nije preporučljivo za trudnice, dojilje i djecu mlađu od 3 godine.",
+            medicinskeKoristi = listOf(MedicinskaKorist.PROTUUPALNO, MedicinskaKorist.PROTIVBOLOVA),
+            profilOkusa = ProfilOkusaBiljke.MENTA,
+            jela = listOf("Jogurt sa voćem", "Gulaš"),
+            klimatskiTipovi = listOf(KlimatskiTip.SREDOZEMNA, KlimatskiTip.UMJERENA),
+            zemljisniTipovi = listOf(Zemljiste.GLINENO, Zemljiste.CRNICA)
         )
         biljkaDAO.saveBiljka(novaBiljka)
         val listaNakonInserta = biljkaDAO.getAllBiljkas()
