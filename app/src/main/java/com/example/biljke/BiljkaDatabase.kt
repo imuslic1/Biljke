@@ -28,7 +28,6 @@ import kotlinx.coroutines.withContext
 abstract class BiljkaDatabase : RoomDatabase() {
     abstract fun biljkaDao() : BiljkaDAO
 
-
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -93,7 +92,6 @@ abstract class BiljkaDatabase : RoomDatabase() {
         @Query("SELECT * FROM Biljka WHERE naziv = :naziv LIMIT 1")
         suspend fun getPlantByName(naziv: String) : List<Biljka>
 
-        //provjeriti da li radi kako treba, možda da se ipak koristi query
         @Update
         suspend fun updateChecked(updatedBiljke : List<Biljka>) : Int
 
@@ -119,8 +117,6 @@ abstract class BiljkaDatabase : RoomDatabase() {
         suspend fun fixOfflineBiljka() : Int{
             val plantsToUpdate : List<Biljka> = getUnchecked()
             val updatedPlants : MutableList<Biljka> = mutableListOf()
-
-            Log.e("POVUKAO LISTU IZ BAZE", plantsToUpdate.size.toString())
 
             val context = ContextProvider.getContext()
             val trefle = TrefleDAO()

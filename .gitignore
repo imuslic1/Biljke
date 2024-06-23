@@ -50,3 +50,6 @@ Thumbs.db
 
 # gradle files
 .gradle/
+
+# config cache
+build/reports/configuration-cache/*

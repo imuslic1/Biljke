@@ -143,6 +143,7 @@ public abstract class MyConverter {
 
             return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
         }
-    }}
+    }
+}
 
 
