@@ -109,8 +109,11 @@ public abstract class MyConverter {
     public static class BitmapConverter {
         @TypeConverter
         public String fromBitmap(Bitmap bitmap) {
+            Bitmap resizedBitmap = resizeBitmap(bitmap);
+
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+
             return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
         }
 
@@ -119,7 +122,27 @@ public abstract class MyConverter {
             byte[] bytes = Base64.decode(data, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
-    }
-}
+
+        private static Bitmap resizeBitmap(Bitmap bitmap) {
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+
+            if (width <= 400 && height <= 400) {
+                return bitmap;
+            }
+
+            float aspectRatio = (float) width / (float) height;
+            int newWidth = 400;
+            int newHeight = 400;
+
+            if (width > height) {
+                newHeight = Math.round(400 / aspectRatio);
+            } else if (height > width) {
+                newWidth = Math.round(400 * aspectRatio);
+            }
+
+            return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+        }
+    }}
 
 
