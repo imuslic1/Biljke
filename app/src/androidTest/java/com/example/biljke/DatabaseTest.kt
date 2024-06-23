@@ -15,6 +15,8 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.example.biljke.BiljkaDatabase.BiljkaDAO
+
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {

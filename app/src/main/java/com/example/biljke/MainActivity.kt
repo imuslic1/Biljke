@@ -1,11 +1,9 @@
 package com.example.biljke
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -15,12 +13,10 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.biljke.MyConverter.BitmapConverter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -40,9 +36,6 @@ class MainActivity : AppCompatActivity() {
     private var selectedColor : String = "red"
     private var pretrazenoPoBoji : Boolean = false
 
-
-    private val biljkeObicne = fetchBiljke()
-    //private var biljkeList: MutableList<Biljka> = biljkeObicne.toMutableList()
     private var biljkeList: MutableList<Biljka> = mutableListOf()
     private lateinit var pretrazeneBiljkePoBoji : List<Biljka>
 
@@ -50,37 +43,52 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        ContextProvider.initialize(this)
-
         //Initialize the DB
+        ContextProvider.initialize(this)
         DB = BiljkaDatabase.getInstance(this)
         val biljkaDao = DB.biljkaDao()
-        val roomDao = DB.roomDao()
-        val dao = TrefleDAO()
-        dao.setContext(this)
-        lateinit var converter: BitmapConverter
+        val trefle = TrefleDAO()
+        trefle.setContext(this)
 
-        val scope = CoroutineScope(Job() + Dispatchers.Main)
-        scope.launch {
+        //Add from BiljkeStaticData:
+        lifecycleScope.launch {
+            val biljkeDB : List<Biljka> = biljkaDao.getAllBiljkas()
+            if(biljkeDB.isEmpty())
+                biljkaDao.insertBiljkas(fetchBiljke())
+
             val result = biljkaDao.getAllBiljkas().toMutableList()
-
             when(result) {
                 is List<Biljka> -> onFetchPlantsIntoDBSuccess(result)
                 else -> onError()
             }
 
+
+            //Insert images for plants
             val job2 = launch {
-                for(biljka in biljkeList) {
-                    val TAG = "MainActivity"
-                    var bitmap : Bitmap = dao.getImage(biljka)!!
-                    val result = DB.biljkaDao().addImage(biljka.id!!, bitmap)
+                for(biljka in result) {
+                    var bitmap : Bitmap = trefle.getImage(biljka)!!
+                    DB.biljkaDao().addImage(biljka.id!!, bitmap)
+
                 }
-                updateAdapter(currentMode, biljkeList)
+                updateAdapter(currentMode, result)
             }
             job2.join()
+
+            //FixOffline for plants that were added while WiFi was off
+            val job3 = launch {
+                try {
+                    biljkaDao.fixOfflineBiljka()
+                    val result = biljkaDao.getAllBiljkas().toMutableList()
+                    when(result) {
+                        is List<Biljka> -> onFetchPlantsIntoDBSuccess(result)
+                        else -> onError()
+                    }
+                } catch(e: Exception) {
+                    Toast.makeText(this@MainActivity, "Nije moguće provjeriti nevalidirane biljke.\nProvjerite internet konekciju.", Toast.LENGTH_LONG).show()
+                }
+            }
+            job3.join()
         }
-
-
 
         //Initialize the variables
         selectMode = findViewById(R.id.modSpinner)
@@ -162,14 +170,14 @@ class MainActivity : AppCompatActivity() {
                 bojaSpinner.prompt = "Odaberite boju: "
             }
         }
+
         brzaPretragaButton.setOnClickListener {
             val substr : String = pretragaNazivET.text.toString()
 
             val dao = TrefleDAO()
             dao.setContext(this)
-            val scope = CoroutineScope(Job() + Dispatchers.Main)
             if(substr != "")
-                scope.launch {
+                lifecycleScope.launch {
                     try {
                         pretrazeneBiljkePoBoji = dao.getPlantswithFlowerColor(selectedColor, substr)
                         updateAdapter(currentMode, pretrazeneBiljkePoBoji)
@@ -181,7 +189,6 @@ class MainActivity : AppCompatActivity() {
 
                 }
             else {
-                //Toast.makeText(this@MainActivity, "Unesite naziv za pretragu", Toast.LENGTH_SHORT).show()
                 pretragaNazivET.error = "Unesite naziv za pretragu!"
             }
         }
@@ -189,11 +196,13 @@ class MainActivity : AppCompatActivity() {
 
     fun onFetchPlantsIntoDBSuccess(plants : MutableList<Biljka>) {
         biljkeList = plants
+        filteredBiljke = biljkeList
+        selectedBiljka = null
         updateAdapter(currentMode, biljkeList)
     }
 
     fun onError() {
-        Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@MainActivity, "Došlo je do greške u pristupu bazi podataka.\nPokušajte ponovno.", Toast.LENGTH_SHORT).show()
     }
 
     companion object {
@@ -209,8 +218,7 @@ class MainActivity : AppCompatActivity() {
                 val dao = TrefleDAO()
                 dao.setContext(this)
 
-                val scope = CoroutineScope(Job()+Dispatchers.Main)
-                scope.launch {
+                lifecycleScope.launch {
                     val result = biljkaDao.getAllBiljkas().toMutableList()
 
                     when(result) {

@@ -17,7 +17,6 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -302,7 +301,7 @@ class NovaBiljkaActivity : AppCompatActivity() {
                         dao.setContext(context)
                         fixedBiljka = novaBiljka?.let { it1 -> dao.fixData(it1) }
                         biljkeList?.add(fixedBiljka)
-                        biljkaDao.saveBiljka(fixedBiljka!!)
+                        biljkaDao.insertBiljka(fixedBiljka!!)
                         Toast.makeText(this@NovaBiljkaActivity, "Biljka uspješno dodana!", Toast.LENGTH_SHORT).show()
 
                         /*val returnIntent = Intent()
@@ -314,23 +313,15 @@ class NovaBiljkaActivity : AppCompatActivity() {
                         finish()
                     }
                     catch(e: IllegalArgumentException){
-                        Toast.makeText(this@NovaBiljkaActivity, e.message + "Biljka nije dodana.", Toast.LENGTH_SHORT).show()
-                        /*val returnIntent = Intent()
-                       returnIntent.putParcelableArrayListExtra("biljkeList",
-                           biljkeList?.let { it1 -> ArrayList(it1) })
-
-                        */
+                        biljkaDao.saveBiljka(novaBiljka!!)
+                        Toast.makeText(this@NovaBiljkaActivity, e.message + "Biljka dodana u listu bez validacije.\nProvjeriti latinski naziv!", Toast.LENGTH_LONG).show()
                         setResult(Activity.RESULT_OK, intent)
                         finish()
                     }
                     catch(e: Exception) {
-                        /*val returnIntent = Intent()
-                        returnIntent.putParcelableArrayListExtra("biljkeList",
-                            biljkeList?.let { it1 -> ArrayList(it1) })
-
-                         */
+                        biljkaDao.saveBiljka(novaBiljka!!)
+                        Toast.makeText(this@NovaBiljkaActivity, "Biljka dodana u listu bez validacije.\nProvjeriti internet konekciju!", Toast.LENGTH_LONG).show()
                         setResult(Activity.RESULT_OK, intent)
-                        Toast.makeText(this@NovaBiljkaActivity, "Biljka se ne može validirati! Provjerite internet konekciju.", Toast.LENGTH_LONG).show()
                         finish()
                     }
                 }

@@ -2,6 +2,7 @@ package com.example.biljke;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 import androidx.room.TypeConverter;
 
@@ -41,7 +42,8 @@ public abstract class MyConverter {
             List<KlimatskiTip> enums = new ArrayList<>();
 
             for (String s: dbValues)
-                enums.add(KlimatskiTip.valueOf(s));
+                if(!s.isEmpty())
+                    enums.add(KlimatskiTip.valueOf(s));
 
             return enums;
         }
@@ -64,7 +66,8 @@ public abstract class MyConverter {
             List<Zemljiste> enums = new ArrayList<>();
 
             for (String s: dbValues)
-                enums.add(Zemljiste.valueOf(s));
+                if(!s.isEmpty())
+                    enums.add(Zemljiste.valueOf(s));
 
             return enums;
         }
@@ -105,45 +108,16 @@ public abstract class MyConverter {
 
     public static class BitmapConverter {
         @TypeConverter
-        public byte[] fromBitmap(Bitmap bitmap) {
-            if (bitmap == null) {
-                return null;
-            }
-            // Resize the bitmap if it's larger than 400x400
-            Bitmap resizedBitmap = resizeBitmap(bitmap);
-
+        public String fromBitmap(Bitmap bitmap) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            return outputStream.toByteArray();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
         }
 
         @TypeConverter
-        public Bitmap toBitmap(byte[] byteArray) {
-            if (byteArray == null) {
-                return null;
-            }
-            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        }
-
-        private static Bitmap resizeBitmap(Bitmap bitmap) {
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-
-            if (width <= 400 && height <= 400) {
-                return bitmap;
-            }
-
-            float aspectRatio = (float) width / (float) height;
-            int newWidth = 400;
-            int newHeight = 400;
-
-            if (width > height) {
-                newHeight = Math.round(400 / aspectRatio);
-            } else if (height > width) {
-                newWidth = Math.round(400 * aspectRatio);
-            }
-
-            return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+        public Bitmap toBitmap(String data) {
+            byte[] bytes = Base64.decode(data, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
     }
 }

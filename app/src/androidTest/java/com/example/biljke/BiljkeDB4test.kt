@@ -32,6 +32,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
+import com.example.biljke.BiljkaDatabase.BiljkaDAO
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

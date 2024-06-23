@@ -28,8 +28,14 @@ class TrefleDAO {
 
     suspend fun getImage(biljka: Biljka) : Bitmap? {
         return withContext(Dispatchers.IO) {
+            lateinit var speciesIdByLatinList : List<SpeciesItem>
             val latinskiNaziv = getLatinskiNaziv(biljka)
-            var speciesIdByLatinList = ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
+
+            try {
+                speciesIdByLatinList = ApiAdapter.retrofit.getPlants(latinskiNaziv).body()!!.plants
+            } catch(e: Exception) {
+                return@withContext defaultBitmap
+            }
 
             if(speciesIdByLatinList.isEmpty())
                 return@withContext defaultBitmap
@@ -118,6 +124,8 @@ class TrefleDAO {
                     if(speciesThatMatches.growth.lightValue in 0..5 && speciesThatMatches.growth.atmosphericHumidity in 3..7)
                         fixedKlimatskiTipovi.add(KlimatskiTip.PLANINSKA)
                 }
+                if(fixedKlimatskiTipovi.isEmpty())
+                    fixedKlimatskiTipovi = biljka.klimatskiTipovi.toMutableList()
 
                 if(speciesThatMatches.growth.soilTexture != null) {
                     fixedZemljisniTipovi.clear()
@@ -155,8 +163,9 @@ class TrefleDAO {
 
                     else if(speciesThatMatches.growth.soilTexture in 7..8)
                         fixedZemljisniTipovi.add(Zemljiste.CRNICA)
-
                 }
+                if(fixedZemljisniTipovi.isEmpty())
+                    fixedZemljisniTipovi = biljka.zemljisniTipovi.toMutableList()
 
                 //  Validacija i provjera uslova:
                 //      - naziv ostaje isti zajedno sa latinskim koji se parsirao
@@ -172,7 +181,8 @@ class TrefleDAO {
                 //        * ako nije null, kreiraj novu listu s jednim elementom (jedino odgovarajuce
                 //          zemljiste
 
-                var fixedBiljka = Biljka(naziv = biljka.naziv,
+                var fixedBiljka = Biljka(id = biljka.id,
+                                         naziv = biljka.naziv,
                                          porodica = fixedPorodica,
                                          medicinskoUpozorenje = fixedMedicinskoUpozorenje,
                                          medicinskeKoristi = biljka.medicinskeKoristi,
