@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Biljke</string>
+    <string name="plantName" />
+    <string name="medWarning_text" />
+    <string name="medBenefit1" />
+    <string name="medBenefit2" />
+    <string name="medBenefit3" />
+    <string name="resetBtn">Reset</string>
+    <string name="cookingTasteProfile" />
+    <string name="cookingDish1" />
+    <string name="cookingDish2" />
+    <string name="cookingDish3" />
+    <string name="botanicFamily" />
+    <string name="botanicClimate" />
+    <string name="botanicSoilType" />
+    <string name="addPlant">Add Plant</string>
+    <string name="nazivET">Naziv:</string>
+    <string name="porodicaET">Porodica:</string>
+    <string name="medicinskoUpozorenjeET">Medicinsko upozorenje:</string>
+    <string name="jeloET">Jelo:</string>
+    <string name="dodajJelo">Dodaj jelo</string>
+    <string name="izmijeniJelo">Izmijeni jelo</string>
+    <string name="dodajBiljku">Dodaj biljku</string>
+    <string name="uslikajBiljku">Uslikaj biljku</string>
+    <string name="klimatskiTip">Klimatski tip:</string>
+    <string name="medicinskaKorist">Medicinska korist:</string>
+    <string name="zemljisniTip">Zemljišni tip:</string>
+    <string name="jela">Jela:</string>
+    <string name="profilOkusa">Profil okusa:</string>
+    <string name="fotografija">Fotografija:</string>
+    <string name="substringET">Naziv:</string>
+    <string name="pretragabtn">Brza pretraga</string>
+    <string name="pretragaText">Pretraga biljke:</string>
+</resources>
